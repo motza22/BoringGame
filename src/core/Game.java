@@ -47,23 +47,17 @@ public class Game extends Thread {
 			mState.Close();
 		}
 		mState = aState;
+		mState.Initialize();
 		mStateLock.unlock();
 	}
 	
 	@Override
 	public void run() {
-		mState = new MainMenu();
-		
+		PushState( new MainMenu() );
 		while(HasActiveState()) {
-			try {
-				mStateLock.lock();
-				mState.Update();
-				mStateLock.unlock();
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				mStateLock.unlock();
-			}
+			mStateLock.lock();
+			mState.Update();
+			mStateLock.unlock();
 		}
 	}
 	

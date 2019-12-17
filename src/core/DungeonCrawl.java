@@ -1,13 +1,20 @@
 package core;
 
+import display.JFrameApplication;
+
 public class DungeonCrawl extends State {
+	private static JFrameApplication mJFrApp = null;
 	
 	public DungeonCrawl() {
-		System.out.println("Hello World.");
 	}
 
 	@Override
 	public void Close() {
+	}
+	
+	@Override
+	protected void Initialize() {
+		mJFrApp = JFrameApplication.StartApplication();
 	}
 
 	@Override
@@ -16,6 +23,5 @@ public class DungeonCrawl extends State {
 
 	@Override
 	public void Update() {
-		Game.GetInstance().PopState();
 	}
 }

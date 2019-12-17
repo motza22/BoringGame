@@ -1,4 +1,4 @@
-package display;
+package data;
 
 public class MenuOption {
 	public final String mString;

@@ -5,6 +5,7 @@ public abstract class State {
 	}
 	
 	public abstract void Close();
+	protected abstract void Initialize();
 	public abstract void ProcessInput(int aInput);
 	public abstract void Update();
 }
