@@ -24,6 +24,18 @@ public class MainMenu extends State {
 	}
 	
 	@Override
+	public void HandleNotify(int aInputId) {
+		if(aInputId == sOptionPlay.mId) {
+			Game.GetInstance().PushState(new DungeonCrawl());
+		}
+//		else if(aInput == sOptionGenerate.mId) {
+//		}
+		else { /* if(aInput == sOptionExit.mId) */
+			Game.GetInstance().PopState();
+		}
+	}
+	
+	@Override
 	public void Initialize() {
 		mJFrApp = JFrameApplication.GetInstance();
 		
@@ -39,18 +51,6 @@ public class MainMenu extends State {
 		Terminal.DisplayMenuWResponse(sOptionPlay.mString + sOptionGenerate.mString + sOptionExit.mString, sOptionExit.mId);
 	}
 	
-	@Override
-	public void ProcessInput(int aInput) {
-		if(aInput == sOptionPlay.mId) {
-			Game.GetInstance().PushState(new DungeonCrawl());
-		}
-//		else if(aInput == sOptionGenerate.mId) {
-//		}
-		else { /* if(aInput == sOptionExit.mId) */
-			Game.GetInstance().PopState();
-		}
-	}
-
 	@Override
 	public void Update() {
 	}

@@ -26,9 +26,9 @@ public class Game extends Thread {
 		return hasActiveState;
 	}
 	
-	public void Notify(int aInput) {
+	public void Notify(int aInputId) {
 		mStateLock.lock();
-		mState.ProcessInput(aInput);
+		mState.HandleNotify(aInputId);
 		mStateLock.unlock();
 	}
 	

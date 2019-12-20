@@ -21,13 +21,13 @@ public class DungeonCrawl extends State implements KeyListener {
 	}
 	
 	@Override
-	public void Initialize() {
-		mJFrApp = JFrameApplication.GetInstance();
-		mJFrApp.addKeyListener(this);
+	public void HandleNotify(int aInputId) {
 	}
 
 	@Override
-	public void ProcessInput(int aInput) {
+	public void Initialize() {
+		mJFrApp = JFrameApplication.GetInstance();
+		mJFrApp.addKeyListener(this);
 	}
 
 	@Override
