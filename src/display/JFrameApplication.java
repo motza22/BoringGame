@@ -3,13 +3,11 @@ package display;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 
 
-public class JFrameApplication extends JFrame implements KeyListener, Runnable {
+public class JFrameApplication extends JFrame implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private static JFrameApplication sApplication = null;
 	public static final int X = 640;
@@ -32,7 +30,6 @@ public class JFrameApplication extends JFrame implements KeyListener, Runnable {
         setBackground(Color.WHITE);
         setVisible(true);
         setTitle("Boring Game.");
-        addKeyListener(this);
 	}
 	
 	public void AddSprite(Sprite aSprite) {
@@ -73,34 +70,5 @@ public class JFrameApplication extends JFrame implements KeyListener, Runnable {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	@Override
-	public void keyPressed(KeyEvent e) {
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-//		switch(e.getKeyCode()) {
-//			case KeyEvent.VK_W:
-//				newPosition.y++;
-//				break;
-//				
-//			case KeyEvent.VK_A:
-//				newPosition.x--;
-//				break;
-//				
-//			case KeyEvent.VK_S:
-//				newPosition.y--;
-//				break;
-//				
-//			case KeyEvent.VK_D:
-//				newPosition.x++;
-//				break;
-//		}
 	}
 }

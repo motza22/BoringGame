@@ -32,7 +32,7 @@ public class MainMenu extends State {
 	        int height = mRandom.nextInt(32);
 	        int x = mRandom.nextInt(JFrameApplication.X - width);
 	        int y = mRandom.nextInt(JFrameApplication.Y - height);
-			mJFrApp.AddSprite(new SimpleRectangle(x, y, width, height, Color.RED));
+			mJFrApp.AddSprite(new SimpleRectangle(x, y, width, height, Color.YELLOW));
 		}
 		
 		Terminal.DisplayMenu(sOptionHeader.mString);
