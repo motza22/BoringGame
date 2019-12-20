@@ -53,11 +53,16 @@ public class Game extends Thread {
 	
 	@Override
 	public void run() {
-		PushState( new MainMenu() );
+		PushState(new MainMenu());
 		while(HasActiveState()) {
 			mStateLock.lock();
 			mState.Update();
 			mStateLock.unlock();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	

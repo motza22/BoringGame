@@ -15,13 +15,13 @@ public class Terminal extends Thread {
 	}
 	
 	public static void DisplayMenu(String aString) {
-		Terminal t = new Terminal(aString, 0 );
-		t.start();
+		Terminal terminal = new Terminal(aString, 0 );
+		terminal.start();
 	}
 	
 	public static void DisplayMenuWResponse(String aString, int aInputRange) {
-		Terminal t = new Terminal(aString + "\n> ", aInputRange);
-		t.start();
+		Terminal terminal = new Terminal(aString + "\n> ", aInputRange);
+		terminal.start();
 	}
 	
 	@Override

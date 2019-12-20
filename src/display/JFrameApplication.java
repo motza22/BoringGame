@@ -3,25 +3,30 @@ package display;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import javax.swing.JFrame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import javax.swing.JFrame;
 
 
 public class JFrameApplication extends JFrame implements KeyListener, Runnable {
 	private static final long serialVersionUID = 1L;
-	public static int BOARD_SIZE_X = 640;
-	public static int BOARD_SIZE_Y = 480;
+	private static JFrameApplication sApplication = null;
+	public static final int X = 640;
+	public static final int Y = 480;
+	private ArrayList<Sprite> mSprites = new ArrayList<Sprite>();
 
-	public static JFrameApplication StartApplication() {
-		JFrameApplication app = new JFrameApplication();
-		Thread appThread = new Thread(app);
-		appThread.start();
-		return app;
+	public static JFrameApplication GetInstance() {
+		if(sApplication == null) {
+			sApplication = new JFrameApplication();
+			Thread appThread = new Thread(sApplication);
+			appThread.start();
+		}
+		return sApplication;
 	}
 	
 	private JFrameApplication() {
-		setSize(BOARD_SIZE_X, BOARD_SIZE_Y);
+		setSize(X, Y);
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBackground(Color.WHITE);
@@ -30,18 +35,24 @@ public class JFrameApplication extends JFrame implements KeyListener, Runnable {
         addKeyListener(this);
 	}
 	
+	public void AddSprite(Sprite aSprite) {
+		mSprites.add(aSprite);
+	}
+	
 	public void Draw(Graphics aGraphics) {		
-//		for(int i=0; i<_playerUnits.size(); i++) {
-//			Unit unit = _playerUnits.get(i);
-//            unit.draw(graphics);
-//		}
-//		
-//		for(int i=0; i<_enemyUnits.size(); i++) {
-//			Unit unit = _enemyUnits.get(i);
-//            unit.draw(graphics);
-//		}
-//		
-//		repaint();
+		for(int i=0; i<mSprites.size(); i++) {
+			Sprite sprite = mSprites.get(i);
+			sprite.Draw(aGraphics);
+		}
+	}
+	
+	public void RemoveSprite(int aId) {
+		for(int i=0; i<mSprites.size(); i++) {
+			Sprite sprite = mSprites.get(i);
+			if(aId == sprite.ID) {
+				mSprites.remove(i);
+			}
+		}
 	}
 	
 	@Override
@@ -55,25 +66,12 @@ public class JFrameApplication extends JFrame implements KeyListener, Runnable {
 	@Override
 	public void run() {
 		while( true ) {
-//			for(int i=0; i<_playerUnits.size(); i++) {
-//				Unit unit = _playerUnits.get(i);
-//				if(unit.health() > 0) {
-//					unit.takeTurn();
-//				}
-//				else {
-//					_playerUnits.remove(i);
-//				}
-//			}
-//				
-//			for(int i=0; i<_enemyUnits.size(); i++) {
-//				Unit unit = _enemyUnits.get(i);
-//				if(unit.health() > 0) {
-//					unit.takeTurn();
-//				}
-//				else {
-//					_enemyUnits.remove(i);
-//				}
-//			}	
+			repaint();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
