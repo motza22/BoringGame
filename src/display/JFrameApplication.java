@@ -3,16 +3,15 @@ package display;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.util.ArrayList;
+import java.util.Vector;
 import javax.swing.JFrame;
-
 
 public class JFrameApplication extends JFrame implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private static JFrameApplication sApplication = null;
 	public static final int X = 640;
 	public static final int Y = 480;
-	private ArrayList<Sprite> mSprites = new ArrayList<Sprite>();
+	private Vector<Sprite> mSprites = new Vector<Sprite>();
 
 	public static JFrameApplication GetInstance() {
 		if(sApplication == null) {
