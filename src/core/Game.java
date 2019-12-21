@@ -1,11 +1,12 @@
 package core;
 
+import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Game extends Thread {
 	private final ReentrantLock mStateLock = new ReentrantLock();
 	private static Game sInstance = null;
-	private core.State mState = null;
+	private Vector<core.State> mState = new Vector<core.State>();
 	
 	private Game() {
 		// do nothing
@@ -20,26 +21,26 @@ public class Game extends Thread {
 	
 	public void Notify(int aInputId) {
 		mStateLock.lock();
-		mState.HandleNotify(aInputId);
+		mState.firstElement().HandleNotify(aInputId);
 		mStateLock.unlock();
 	}
 	
 	public void PopState() {
 		mStateLock.lock();
-		if(mState != null) {
-			mState.Close();
-			mState = null;
+		if(mState.size() > 0) {
+			mState.firstElement().Close();
+			mState.remove(mState.firstElement());
 		}
 		mStateLock.unlock();
 	}
 	
 	public void PushState(core.State aState) {
 		mStateLock.lock();
-		if(mState != null) {
-			mState.Close();
+		if(mState.size() > 0) {
+			mState.firstElement().Close();
 		}
-		mState = aState;
-		mState.Initialize();
+		mState.insertElementAt(aState, 0);
+		mState.firstElement().Initialize();
 		mStateLock.unlock();
 	}
 	
@@ -49,8 +50,8 @@ public class Game extends Thread {
 		boolean hasActiveState = true;
 		while(hasActiveState) {
 			mStateLock.lock();
-			if(mState != null) {
-				mState.Update();
+			if(mState.size() > 0) {
+				mState.firstElement().Update();
 			}
 			else {
 				hasActiveState = false;
