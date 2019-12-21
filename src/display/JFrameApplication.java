@@ -49,6 +49,12 @@ public class JFrameApplication extends JFrame implements Runnable {
 		mSpriteLock.unlock();
 	}
 	
+	public void Clear() {
+		mSpriteLock.lock();
+		mSprites.clear();
+		mSpriteLock.unlock();
+	}
+
 	public void RemoveLastSprite() {
 		mSpriteLock.lock();
 		if(mSprites.size() > 0) {

@@ -18,14 +18,6 @@ public class Game extends Thread {
 		return sInstance;
 	}
 	
-	public boolean HasActiveState() {
-		boolean hasActiveState = false;
-		mStateLock.lock();
-		hasActiveState = (mState != null);
-		mStateLock.unlock();
-		return hasActiveState;
-	}
-	
 	public void Notify(int aInputId) {
 		mStateLock.lock();
 		mState.HandleNotify(aInputId);
@@ -54,9 +46,15 @@ public class Game extends Thread {
 	@Override
 	public void run() {
 		PushState(new MainMenu());
-		while(HasActiveState()) {
+		boolean hasActiveState = true;
+		while(hasActiveState) {
 			mStateLock.lock();
-			mState.Update();
+			if(mState != null) {
+				mState.Update();
+			}
+			else {
+				hasActiveState = false;
+			}
 			mStateLock.unlock();
 			try {
 				Thread.sleep(100);

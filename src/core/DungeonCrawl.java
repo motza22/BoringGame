@@ -18,6 +18,7 @@ public class DungeonCrawl extends State implements KeyListener {
 	@Override
 	public void Close() {
 		mJFrApp.removeKeyListener(this);
+		mJFrApp.Clear();
 	}
 	
 	@Override

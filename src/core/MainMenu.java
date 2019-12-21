@@ -21,6 +21,7 @@ public class MainMenu extends State {
 	
 	@Override
 	public void Close() {
+		mJFrApp.Clear();
 	}
 	
 	@Override
