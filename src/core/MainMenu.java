@@ -42,8 +42,8 @@ public class MainMenu extends State {
 		for(int i=0; i<100; i++) {
 			int width = mRandom.nextInt(32);
 	        int height = mRandom.nextInt(32);
-	        int x = mRandom.nextInt(JFrameApplication.X - width);
-	        int y = mRandom.nextInt(JFrameApplication.Y - height);
+	        int x = mRandom.nextInt(JFrameApplication.WIDTH - width);
+	        int y = mRandom.nextInt(JFrameApplication.HEIGHT - height);
 			mJFrApp.AddSprite(new SimpleRectangle(x, y, width, height, Color.YELLOW));
 		}
 		

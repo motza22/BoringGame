@@ -34,8 +34,8 @@ public class DungeonCrawl extends State implements KeyListener {
 	public void Update() {
 		int width = mRandom.nextInt(11);
         int height = mRandom.nextInt(11);
-        int x = mRandom.nextInt(JFrameApplication.X - width);
-        int y = mRandom.nextInt(JFrameApplication.Y - height);
+        int x = mRandom.nextInt(JFrameApplication.WIDTH - width);
+        int y = mRandom.nextInt(JFrameApplication.HEIGHT - height);
 		mJFrApp.AddSprite(new SimpleRectangle(x, y, width, height, Color.BLUE));
 	}
 	
@@ -45,8 +45,8 @@ public class DungeonCrawl extends State implements KeyListener {
 		case KeyEvent.VK_R:
 			int width = mRandom.nextInt(55);
 	        int height = mRandom.nextInt(55);
-	        int x = mRandom.nextInt(JFrameApplication.X - width);
-	        int y = mRandom.nextInt(JFrameApplication.Y - height);
+	        int x = mRandom.nextInt(JFrameApplication.WIDTH - width);
+	        int y = mRandom.nextInt(JFrameApplication.HEIGHT - height);
 			mJFrApp.AddSprite(new SimpleRectangle(x, y, width, height, Color.RED));
 			break;
 	}
