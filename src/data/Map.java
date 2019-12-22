@@ -197,21 +197,15 @@ public class Map {
 
 			if(GetTile(nodeX, nodeY).mType == TileType.INACCESSIBLE)
 			{
+				int radius = BoundaryRNG.Range(5, 25);
+				Area nodeArea = new Area(nodeX, nodeY, radius);
+
 				nodeCreated = true;
 				GetTile(nodeX, nodeY).mType = aTileType;
 
-				int radius = BoundaryRNG.Range(5, 25);
-				int nodeMinX = CheckWidth(nodeX - radius);
-				int nodeMaxX = CheckWidth(nodeX + radius);
-				int nodeMinY = CheckHeight(nodeY - radius);
-				int nodeMaxY = CheckHeight(nodeY + radius);
-
-				for(int i = nodeMinX; i <= nodeMaxX; i++)
-				{
-					for(int j = nodeMinY; j <= nodeMaxY; j++)
-					{
-						if(Math.sqrt(Math.pow((nodeX - i), 2) + Math.pow((nodeY - j), 2)) < radius)
-						{
+				for(int i = nodeArea.mMinPos.mX; i <= nodeArea.mMaxPos.mX; i++) {
+					for(int j = nodeArea.mMinPos.mY; j <= nodeArea.mMaxPos.mY; j++) {
+						if(i == CheckWidth(i) && j == CheckHeight(j) && nodeArea.CheckCircle(i, j)) {
 							if(GetTile(i, j).mType == TileType.EMPTY) {
 							} else if(GetTile(i, j).mType == TileType.INACCESSIBLE) {
 								GetTile(i, j).mType = TileType.EMPTY;
