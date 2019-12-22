@@ -67,7 +67,7 @@ public class Map {
 		for(int i = 0; i < nodeLimit; i++) {
 			if(i==0) {
 				CreatePlayableNode(TileType.PLAYER);
-			} else if(i==1) {
+			} else if(i<=1) {
 				CreatePlayableNode(TileType.GOAL);
 			} else {
 				CreatePlayableNode(TileType.EMPTY);
@@ -118,8 +118,14 @@ public class Map {
 	}
 
 	public boolean MoveTile(int aOrigX, int aOrigY, int aNewX, int aNewY) {
+		return MoveTile(aOrigX, aOrigY, aNewX, aNewY, TileType.INACCESSIBLE);
+	}
+
+	public boolean MoveTile(int aOrigX, int aOrigY, int aNewX, int aNewY, TileType aTileType) {
 		if( (aOrigX != aNewX || aOrigY != aNewY ) &&
-				GetTile(aNewX, aNewY).mType != TileType.INACCESSIBLE) {
+				GetTile(aNewX, aNewY).mType != TileType.INACCESSIBLE &&
+				GetTile(aNewX, aNewY).mType != TileType.GOAL &&
+				GetTile(aNewX, aNewY).mType != aTileType) {
 			GetTile(aNewX, aNewY).mType = GetTile(aOrigX, aOrigY).mType;
 			GetTile(aOrigX, aOrigY).mType = TileType.EMPTY;
 			return true;

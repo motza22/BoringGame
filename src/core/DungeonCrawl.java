@@ -13,8 +13,8 @@ import util.BoundaryRNG;
 
 public class DungeonCrawl extends State implements KeyListener {
 	private static JFrameApplication sJFrApp = null;
-	private static int sVisibleRadius = 22;
-	private static int sThreatRadius = 40;
+	private static int sVisibleRadius = 32;
+	private static int sThreatRadius = 50;
 	private Map mMapData;
 	private int mPlayerX;
 	private int mPlayerY;
@@ -45,18 +45,21 @@ public class DungeonCrawl extends State implements KeyListener {
 			int nodeMinY = mMapData.CheckHeight(mPlayerY - sThreatRadius);
 			int nodeMaxY = mMapData.CheckHeight(mPlayerY + sThreatRadius);
 
-			for(int i = nodeMinX; i <= nodeMaxX; i++)
-			{
-				for(int j = nodeMinY; j <= nodeMaxY; j++)
-				{
-					if(Math.sqrt(Math.pow((mPlayerX - i), 2) + Math.pow((mPlayerY - j), 2)) < sVisibleRadius)
-					{
+			for(int i = nodeMinX; i <= nodeMaxX; i++) {
+				for(int j = nodeMinY; j <= nodeMaxY; j++) {
+					if(Math.sqrt(Math.pow((mPlayerX - i), 2) + Math.pow((mPlayerY - j), 2)) < sVisibleRadius) {
 						if(mMapData.GetTile(i, j).mType == TileType.ENEMY) {
-							int newX = mMapData.CheckWidth(BoundaryRNG.Range(i-1, i+1));
-							int newY = mMapData.CheckHeight(BoundaryRNG.Range(j-1, j+1));
-							if(mMapData.MoveTile(i, j, newX, newY) && mPlayerX == newX && mPlayerY == newY) {
-								playerAlive = false;
-								Exit();
+							int retryCount = 3;
+							while(retryCount-- >= 0) {
+								int newX = mMapData.CheckWidth(BoundaryRNG.Range(i-1, i+1));
+								int newY = mMapData.CheckHeight(BoundaryRNG.Range(j-1, j+1));
+								if(mMapData.MoveTile(i, j, newX, newY, TileType.ENEMY)) {
+									retryCount = -1;
+									if(mPlayerX == newX && mPlayerY == newY) {
+										playerAlive = false;
+										Exit();
+									}
+								}
 							}
 						}
 					}
@@ -75,12 +78,9 @@ public class DungeonCrawl extends State implements KeyListener {
 		int nodeMinY = mMapData.CheckHeight(mPlayerY - sVisibleRadius);
 		int nodeMaxY = mMapData.CheckHeight(mPlayerY + sVisibleRadius);
 
-		for(int i = nodeMinX; i <= nodeMaxX; i++)
-		{
-			for(int j = nodeMinY; j <= nodeMaxY; j++)
-			{
-				if(Math.sqrt(Math.pow((mPlayerX - i), 2) + Math.pow((mPlayerY - j), 2)) < sVisibleRadius)
-				{
+		for(int i = nodeMinX; i <= nodeMaxX; i++) {
+			for(int j = nodeMinY; j <= nodeMaxY; j++) {
+				if(Math.sqrt(Math.pow((mPlayerX - i), 2) + Math.pow((mPlayerY - j), 2)) < sVisibleRadius) {
 					MapTile tile = mMapData.GetTile(i, j);
 					Color color = Color.BLACK;
 
