@@ -47,7 +47,7 @@ public class MapCreate extends State {
 	public void HandleNotify(int aInputId) {
 		if(aInputId == sOptionGenerateMap.mId) {
 			mMapData.GenerateNew();
-			ShowMap();
+			OnDisplay();
 		}
 		else { /* if(aInput == sOptionExit.mId) */
 			Game.GetInstance().Pop(1);
