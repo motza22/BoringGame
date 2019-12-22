@@ -23,8 +23,8 @@ public class Map {
 	public void GenerateNew() {
 		Reinitialize();
 
-		int nodeLimit = (int)(((Math.sqrt(mWidth * mHeight) / 20) * BoundaryRNG.Range(1, 3)) + BoundaryRNG.Range(2, 4));
-		int enemyLimit = (int)((Math.sqrt(mWidth * mHeight) / 10) * BoundaryRNG.Range(20, 40));
+		int nodeLimit = (int)(((Math.sqrt(mWidth * mHeight) / 20) * BoundaryRNG.Range(2, 4)) + BoundaryRNG.Range(4, 6));
+		int enemyLimit = (int)((Math.sqrt(mWidth * mHeight) / 10) * BoundaryRNG.Range(15, 25));
 
 		for(int i = 0; i < nodeLimit; i++) {
 			if(i==0) {
@@ -94,9 +94,10 @@ public class Map {
 
 			if(mTiles.elementAt(nodeX).elementAt(nodeY).mType == TileType.INACCESSIBLE)
 			{
+				nodeCreated = true;
 				mTiles.elementAt(nodeX).elementAt(nodeY).mType = aTileType;
 
-				int radius = BoundaryRNG.Range(4, 14);
+				int radius = BoundaryRNG.Range(5, 25);
 				int nodeMinX = CheckWidth(nodeX - radius);
 				int nodeMaxX = CheckWidth(nodeX + radius);
 				int nodeMinY = CheckHeight(nodeY - radius);
@@ -108,15 +109,53 @@ public class Map {
 					{
 						if(Math.sqrt(Math.pow((nodeX - i), 2) + Math.pow((nodeY - j), 2)) < radius)
 						{
-							if(mTiles.elementAt(i).elementAt(j).mType == TileType.INACCESSIBLE)
-							{
+							if(mTiles.elementAt(i).elementAt(j).mType == TileType.EMPTY) {
+							} else if(mTiles.elementAt(i).elementAt(j).mType == TileType.INACCESSIBLE) {
 								mTiles.elementAt(i).elementAt(j).mType = TileType.EMPTY;
 							}
 						}
 					}
 				}
 
-				nodeCreated = true;
+				if(aTileType == TileType.PLAYER || aTileType == TileType.GOAL) {
+					MakeTunnels( CheckWidth(BoundaryRNG.Range(nodeX - radius, nodeX + radius)),
+							CheckHeight(BoundaryRNG.Range(nodeY - radius, nodeY + radius)), 8, true);
+				} else {
+					MakeTunnels( CheckWidth(BoundaryRNG.Range(nodeX - radius, nodeX + radius)),
+							CheckHeight(BoundaryRNG.Range(nodeY - radius, nodeY + radius)), 3, false);
+				}
+			}
+		}
+	}
+
+	private void MakeTunnels(int aX, int aY, int aCount, boolean recursive) {
+		for(int i=0; i<aCount; i++) {
+			int direction = BoundaryRNG.Upper(2);
+			if(direction == 0) {
+				int lowerIdx = CheckWidth(BoundaryRNG.Range(aX - 100, aX));
+				int upperIdx = CheckWidth(BoundaryRNG.Range(aX, aX + 100));
+				for(int j = lowerIdx; j <= upperIdx; j++) {
+					if(mTiles.elementAt(j).elementAt(aY).mType == TileType.INACCESSIBLE) {
+						mTiles.elementAt(j).elementAt(aY).mType = TileType.EMPTY;
+					}
+				}
+				if(recursive) {
+					MakeTunnels(lowerIdx, aY, aCount, false);
+					MakeTunnels(upperIdx, aY, aCount, false);
+				}
+
+			} else {
+				int lowerIdx = CheckHeight(BoundaryRNG.Range(aY - 100, aY));
+				int upperIdx = CheckHeight(BoundaryRNG.Range(aY, aY + 100));
+				for(int j = lowerIdx; j <= upperIdx; j++) {
+					if(mTiles.elementAt(aX).elementAt(j).mType == TileType.INACCESSIBLE) {
+						mTiles.elementAt(aX).elementAt(j).mType = TileType.EMPTY;
+					}
+				}
+				if(recursive) {
+					MakeTunnels(lowerIdx, aY, aCount, false);
+					MakeTunnels(upperIdx, aY, aCount, false);
+				}
 			}
 		}
 	}
@@ -136,7 +175,7 @@ public class Map {
 				int groupSize = (BoundaryRNG.Range(1, 20) > 15 ? BoundaryRNG.Range(1, 5) : 0);
 				int runCount = 0;
 
-				while(runCount++ < 16 && groupSize > 0)
+				while(runCount++ < 8 && groupSize > 0)
 				{
 					enemyX += CheckWidth(BoundaryRNG.Range(-1, 1));
 					enemyY += CheckHeight(BoundaryRNG.Range(-1, 1));
