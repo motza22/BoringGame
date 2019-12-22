@@ -31,8 +31,8 @@ public class ViewMap extends State implements MouseListener {
 		mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
 			Color color = Color.BLACK;
 
-			if(tile.mType == TileType.INACCESSIBLE) {
-				color = Color.DARK_GRAY;
+			if(tile.mType == TileType.EMPTY) {
+				color = Color.LIGHT_GRAY;
 			} else if(tile.mType == TileType.PLAYER) {
 				color = Color.BLUE;
 			} else if(tile.mType == TileType.ENEMY) {
@@ -41,7 +41,7 @@ public class ViewMap extends State implements MouseListener {
 				color = Color.YELLOW;
 			}
 
-			if(tile.mType != TileType.EMPTY) {
+			if(tile.mType != TileType.INACCESSIBLE) {
 				sJFrApp.AddSprite(new SimpleRectangle(tile.GetRectangle(), color));
 			}
 		}));
@@ -61,7 +61,7 @@ public class ViewMap extends State implements MouseListener {
 	@Override
 	public void Show() {
 		sJFrApp.Clear();
-		sJFrApp.setBackground(Color.LIGHT_GRAY);
+		sJFrApp.setBackground(Color.DARK_GRAY);
 		ShowMap();
 		sJFrApp.AddSprite(sNewButton);
 		sJFrApp.AddSprite(sPlayButton);

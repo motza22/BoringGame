@@ -133,19 +133,18 @@ public class DungeonCrawl extends State implements KeyListener {
 
 	@Override
 	public void Update() {
+		TakeTurn();
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int newX;
 		int newY;
-		boolean consumed = false;
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_W:
 			newY = mMapData.CheckHeight(mPlayerY - mPlayerSpeed);
 			if( mMapData.MoveTile(mPlayerX, mPlayerY, mPlayerX, newY) ) {
 				mPlayerY = newY;
-				consumed = true;
 			}
 			break;
 
@@ -153,7 +152,6 @@ public class DungeonCrawl extends State implements KeyListener {
 			newY = mMapData.CheckHeight(mPlayerY + mPlayerSpeed);
 			if( mMapData.MoveTile(mPlayerX, mPlayerY, mPlayerX, newY)) {
 				mPlayerY = newY;
-				consumed = true;
 			}
 			break;
 
@@ -161,7 +159,6 @@ public class DungeonCrawl extends State implements KeyListener {
 			newX = mMapData.CheckWidth(mPlayerX - mPlayerSpeed);
 			if( mMapData.MoveTile(mPlayerX, mPlayerY, newX, mPlayerY)) {
 				mPlayerX = newX;
-				consumed = true;
 			}
 			break;
 
@@ -169,16 +166,12 @@ public class DungeonCrawl extends State implements KeyListener {
 			newX = mMapData.CheckWidth(mPlayerX + mPlayerSpeed);
 			if( mMapData.MoveTile(mPlayerX, mPlayerY, newX, mPlayerY)) {
 				mPlayerX = newX;
-				consumed = true;
 			}
 			break;
 
 		case KeyEvent.VK_K:
 			EndGame();
 			break;
-		}
-		if(consumed) {
-			TakeTurn();
 		}
 	}
 
