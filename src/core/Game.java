@@ -6,10 +6,9 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Game extends Thread {
 	private final ReentrantLock mStateLock = new ReentrantLock();
 	private static Game sInstance = null;
-	private Vector<core.State> mState = new Vector<core.State>();
+	private Vector<core.State> mStateStack = new Vector<core.State>();
 	
 	private Game() {
-		// do nothing
 	}
 	
 	public static Game GetInstance() {
@@ -21,37 +20,40 @@ public class Game extends Thread {
 	
 	public void Notify(int aInputId) {
 		mStateLock.lock();
-		mState.firstElement().HandleNotify(aInputId);
+		mStateStack.firstElement().HandleNotify(aInputId);
 		mStateLock.unlock();
 	}
 	
-	public void PopState() {
+	public void Pop(int aPopCount) {
 		mStateLock.lock();
-		if(mState.size() > 0) {
-			mState.firstElement().Close();
-			mState.remove(mState.firstElement());
+		if(mStateStack.size() > 0 && aPopCount > 0) {
+			mStateStack.firstElement().Close();
+			mStateStack.remove(mStateStack.firstElement());
+			aPopCount--;
 		}
 		mStateLock.unlock();
 	}
 	
-	public void PushState(core.State aState) {
+	public void Push(core.State aState) {
 		mStateLock.lock();
-		if(mState.size() > 0) {
-			mState.firstElement().Close();
-		}
-		mState.insertElementAt(aState, 0);
-		mState.firstElement().Initialize();
+		mStateStack.insertElementAt(aState, 0);
+		mStateStack.firstElement().Initialize();
 		mStateLock.unlock();
+	}
+	
+	public void PopPush(int aPopCount, core.State aState) {
+		Pop(aPopCount);
+		Push(aState);
 	}
 	
 	@Override
 	public void run() {
-		PushState(new MainMenu());
+		Push(new MainMenu());
 		boolean hasActiveState = true;
 		while(hasActiveState) {
 			mStateLock.lock();
-			if(mState.size() > 0) {
-				mState.firstElement().Update();
+			if(mStateStack.size() > 0) {
+				mStateStack.firstElement().Update();
 			}
 			else {
 				hasActiveState = false;

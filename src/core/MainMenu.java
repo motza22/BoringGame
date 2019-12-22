@@ -27,12 +27,12 @@ public class MainMenu extends State {
 	@Override
 	public void HandleNotify(int aInputId) {
 		if(aInputId == sOptionPlay.mId) {
-			Game.GetInstance().PushState(new DungeonCrawl());
+			Game.GetInstance().PopPush( 1, new DungeonCrawl());
 		}
 //		else if(aInput == sOptionGenerate.mId) {
 //		}
 		else { /* if(aInput == sOptionExit.mId) */
-			Game.GetInstance().PopState();
+			Game.GetInstance().Pop(1);
 		}
 	}
 	
