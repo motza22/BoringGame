@@ -9,23 +9,64 @@ import data.MapTile;
 import data.MapTile.TileType;
 import display.JFrameApplication;
 import display.SimpleRectangle;
+import util.BoundaryRNG;
 
 public class DungeonCrawl extends State implements KeyListener {
 	private static JFrameApplication sJFrApp = null;
 	private static int sVisibleRadius = 22;
+	private static int sThreatRadius = 40;
 	private Map mMapData;
 	private int mPlayerX;
 	private int mPlayerY;
+	private int mGoalX;
+	private int mGoalY;
 	private int mPlayerSpeed;
 
 	public DungeonCrawl() {
-		mPlayerX = 0;
-		mPlayerY = 0;
+		mPlayerX = -1;
+		mPlayerY = -1;
+		mGoalX = -1;
+		mGoalY = -1;
 		mPlayerSpeed = 1;
 	}
 
+	private void Exit() {
+		Game.GetInstance().PopPush( 1, new MainMenu());
+		Game.GetInstance().Push(new ViewMap());
+	}
+
 	private void TakeTurn() {
-		Show();
+		if(mPlayerX == mGoalX && mPlayerY == mGoalY) {
+			Exit();
+		} else {
+			boolean playerAlive = true;
+			int nodeMinX = mMapData.CheckWidth(mPlayerX - sThreatRadius);
+			int nodeMaxX = mMapData.CheckWidth(mPlayerX + sThreatRadius);
+			int nodeMinY = mMapData.CheckHeight(mPlayerY - sThreatRadius);
+			int nodeMaxY = mMapData.CheckHeight(mPlayerY + sThreatRadius);
+
+			for(int i = nodeMinX; i <= nodeMaxX; i++)
+			{
+				for(int j = nodeMinY; j <= nodeMaxY; j++)
+				{
+					if(Math.sqrt(Math.pow((mPlayerX - i), 2) + Math.pow((mPlayerY - j), 2)) < sVisibleRadius)
+					{
+						if(mMapData.GetTile(i, j).mType == TileType.ENEMY) {
+							int newX = mMapData.CheckWidth(BoundaryRNG.Range(i-1, i+1));
+							int newY = mMapData.CheckHeight(BoundaryRNG.Range(j-1, j+1));
+							if(mMapData.MoveTile(i, j, newX, newY) && mPlayerX == newX && mPlayerY == newY) {
+								playerAlive = false;
+								Exit();
+							}
+						}
+					}
+				}
+			}
+
+			if(playerAlive) {
+				Show();
+			}
+		}
 	}
 
 	private void ShowVisibleArea() {
@@ -40,7 +81,7 @@ public class DungeonCrawl extends State implements KeyListener {
 			{
 				if(Math.sqrt(Math.pow((mPlayerX - i), 2) + Math.pow((mPlayerY - j), 2)) < sVisibleRadius)
 				{
-					MapTile tile = mMapData.Get().elementAt(i).elementAt(j);
+					MapTile tile = mMapData.GetTile(i, j);
 					Color color = Color.BLACK;
 
 					if(tile.mType == TileType.INACCESSIBLE) {
@@ -64,6 +105,7 @@ public class DungeonCrawl extends State implements KeyListener {
 	public void Close() {
 		sJFrApp.removeKeyListener(this);
 		sJFrApp.Clear();
+		mMapData.Save();
 	}
 
 	@Override
@@ -75,12 +117,25 @@ public class DungeonCrawl extends State implements KeyListener {
 		if(!mMapData.IsSane()) {
 			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
 		}
-		mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
-			if(tile.mType == TileType.PLAYER) {
-				mPlayerX = tile.mX;
-				mPlayerY = tile.mY;
+
+		boolean isSane = false;
+		while(!isSane) {
+			isSane = true;
+			mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
+				if(tile.mType == TileType.PLAYER) {
+					mPlayerX = tile.mX;
+					mPlayerY = tile.mY;
+				} else if(tile.mType == TileType.GOAL) {
+					mGoalX = tile.mX;
+					mGoalY = tile.mY;
+				}
+			}));
+
+			if( mPlayerX == -1 || mPlayerY == -1 || mGoalX == -1 || mGoalY == -1) {
+				mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
+				isSane = false;
 			}
-		}));
+		}
 	}
 
 	@Override

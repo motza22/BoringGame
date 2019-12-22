@@ -85,6 +85,10 @@ public class Map {
 		return mTiles;
 	}
 
+	public final MapTile GetTile(int aX, int aY) {
+		return mTiles.elementAt(aX).elementAt(aY);
+	}
+
 	public boolean IsSane() {
 		return mWidth != 0 && mHeight != 0;
 	}
@@ -101,7 +105,7 @@ public class Map {
 				Reinitialize();
 				for(int i=0; i<mWidth && count<data.length; i++) {
 					for(int j=0; j<mHeight && count<data.length; j++) {
-						mTiles.elementAt(i).elementAt(j).mType = TileType.values()[Integer.parseInt(data[count++])];
+						GetTile(i, j).mType = TileType.values()[Integer.parseInt(data[count++])];
 					}
 				}
 			}
@@ -114,9 +118,10 @@ public class Map {
 	}
 
 	public boolean MoveTile(int aOrigX, int aOrigY, int aNewX, int aNewY) {
-		if(mTiles.elementAt(aNewX).elementAt(aNewY).mType != TileType.INACCESSIBLE) {
-			mTiles.elementAt(aNewX).elementAt(aNewY).mType = mTiles.elementAt(aOrigX).elementAt(aOrigY).mType;
-			mTiles.elementAt(aOrigX).elementAt(aOrigY).mType = TileType.EMPTY;
+		if( (aOrigX != aNewX || aOrigY != aNewY ) &&
+				GetTile(aNewX, aNewY).mType != TileType.INACCESSIBLE) {
+			GetTile(aNewX, aNewY).mType = GetTile(aOrigX, aOrigY).mType;
+			GetTile(aOrigX, aOrigY).mType = TileType.EMPTY;
 			return true;
 		}
 		return false;
@@ -131,7 +136,7 @@ public class Map {
 			csvWriter.append(sDelim);
 			for(int i=0; i<mWidth; i++) {
 				for(int j=0; j<mHeight; j++) {
-					csvWriter.append(Integer.toString(mTiles.elementAt(i).elementAt(j).mType.ordinal()));
+					csvWriter.append(Integer.toString(GetTile(i, j).mType.ordinal()));
 					csvWriter.append(sDelim);
 				}
 			}
@@ -163,10 +168,10 @@ public class Map {
 			int nodeX = BoundaryRNG.Range(0, mWidth - 1);
 			int nodeY = BoundaryRNG.Range(0, mHeight - 1);
 
-			if(mTiles.elementAt(nodeX).elementAt(nodeY).mType == TileType.INACCESSIBLE)
+			if(GetTile(nodeX, nodeY).mType == TileType.INACCESSIBLE)
 			{
 				nodeCreated = true;
-				mTiles.elementAt(nodeX).elementAt(nodeY).mType = aTileType;
+				GetTile(nodeX, nodeY).mType = aTileType;
 
 				int radius = BoundaryRNG.Range(5, 25);
 				int nodeMinX = CheckWidth(nodeX - radius);
@@ -180,9 +185,9 @@ public class Map {
 					{
 						if(Math.sqrt(Math.pow((nodeX - i), 2) + Math.pow((nodeY - j), 2)) < radius)
 						{
-							if(mTiles.elementAt(i).elementAt(j).mType == TileType.EMPTY) {
-							} else if(mTiles.elementAt(i).elementAt(j).mType == TileType.INACCESSIBLE) {
-								mTiles.elementAt(i).elementAt(j).mType = TileType.EMPTY;
+							if(GetTile(i, j).mType == TileType.EMPTY) {
+							} else if(GetTile(i, j).mType == TileType.INACCESSIBLE) {
+								GetTile(i, j).mType = TileType.EMPTY;
 							}
 						}
 					}
@@ -206,8 +211,8 @@ public class Map {
 				int lowerIdx = CheckWidth(BoundaryRNG.Range(aX - 100, aX));
 				int upperIdx = CheckWidth(BoundaryRNG.Range(aX, aX + 100));
 				for(int j = lowerIdx; j <= upperIdx; j++) {
-					if(mTiles.elementAt(j).elementAt(aY).mType == TileType.INACCESSIBLE) {
-						mTiles.elementAt(j).elementAt(aY).mType = TileType.EMPTY;
+					if(GetTile(j, aY).mType == TileType.INACCESSIBLE) {
+						GetTile(j, aY).mType = TileType.EMPTY;
 					}
 				}
 				if(recursive) {
@@ -219,8 +224,8 @@ public class Map {
 				int lowerIdx = CheckHeight(BoundaryRNG.Range(aY - 100, aY));
 				int upperIdx = CheckHeight(BoundaryRNG.Range(aY, aY + 100));
 				for(int j = lowerIdx; j <= upperIdx; j++) {
-					if(mTiles.elementAt(aX).elementAt(j).mType == TileType.INACCESSIBLE) {
-						mTiles.elementAt(aX).elementAt(j).mType = TileType.EMPTY;
+					if(GetTile(aX, j).mType == TileType.INACCESSIBLE) {
+						GetTile(aX, j).mType = TileType.EMPTY;
 					}
 				}
 				if(recursive) {
@@ -238,10 +243,10 @@ public class Map {
 			int enemyX = BoundaryRNG.Range(0, mWidth - 1);
 			int enemyY = BoundaryRNG.Range(0, mHeight - 1);
 
-			if(mTiles.elementAt(enemyX).elementAt(enemyY).mType == TileType.EMPTY)
+			if(GetTile(enemyX, enemyY).mType == TileType.EMPTY)
 			{
 				clusterPlaced = true;
-				mTiles.elementAt(enemyX).elementAt(enemyY).mType =  TileType.ENEMY;
+				GetTile(enemyX, enemyY).mType =  TileType.ENEMY;
 
 				int groupSize = (BoundaryRNG.Range(1, 20) > 15 ? BoundaryRNG.Range(1, 5) : 0);
 				int runCount = 0;
@@ -251,9 +256,9 @@ public class Map {
 					enemyX += CheckWidth(BoundaryRNG.Range(-1, 1));
 					enemyY += CheckHeight(BoundaryRNG.Range(-1, 1));
 
-					if(mTiles.elementAt(enemyX).elementAt(enemyY).mType == TileType.EMPTY)
+					if(GetTile(enemyX, enemyY).mType == TileType.EMPTY)
 					{
-						mTiles.elementAt(enemyX).elementAt(enemyY).mType =  TileType.ENEMY;
+						GetTile(enemyX, enemyY).mType =  TileType.ENEMY;
 						groupSize--;
 						break;
 					}
