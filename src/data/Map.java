@@ -1,14 +1,26 @@
 package data;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Vector;
 
 import data.MapTile.TileType;
 import util.BoundaryRNG;
 
 public class Map {
-	private final int mWidth;
-	private final int mHeight;
+	private static final String sPath = "C:/Users/Zach/java_workspace/boring_game/save/map.csv";
+	private static final String sDelim = ",";
+	private int mWidth;
+	private int mHeight;
 	private Vector<Vector<MapTile>> mTiles = new Vector<Vector<MapTile>>();
+
+	public Map() {
+		mWidth = 0;
+		mHeight = 0;
+	}
 
 	public Map(int aWidth, int aHeight) {
 		mWidth = aWidth;
@@ -18,6 +30,12 @@ public class Map {
 	public void Clear() {
 		mTiles.forEach((vector) -> vector.clear());
 		mTiles.clear();
+	}
+
+	public void GenerateNew(int aWidth, int aHeight) {
+		mWidth = aWidth;
+		mHeight = aHeight;
+		GenerateNew();
 	}
 
 	public void GenerateNew() {
@@ -48,9 +66,49 @@ public class Map {
 	}
 
 	public void LoadSave() {
+		try {
+			BufferedReader csvReader = new BufferedReader(new FileReader(sPath));
+			String row;
+			while ((row = csvReader.readLine()) != null) {
+				String[] data = row.split(sDelim);
+				int count = 0;
+				mWidth = Integer.parseInt(data[count++]);
+				mHeight = Integer.parseInt(data[count++]);
+				Reinitialize();
+				for(int i=0; i<mWidth && count<data.length; i++) {
+					for(int j=0; j<mHeight && count<data.length; j++) {
+						mTiles.elementAt(i).elementAt(j).mType = TileType.values()[Integer.parseInt(data[count++])];
+					}
+				}
+			}
+			csvReader.close();
+		} catch (FileNotFoundException e) {
+			// do nothing
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void Save() {
+		try {
+			FileWriter csvWriter = new FileWriter(sPath);
+			csvWriter.append(Integer.toString(mWidth));
+			csvWriter.append(sDelim);
+			csvWriter.append(Integer.toString(mHeight));
+			csvWriter.append(sDelim);
+			for(int i=0; i<mWidth; i++) {
+				for(int j=0; j<mHeight; j++) {
+					csvWriter.append(Integer.toString(mTiles.elementAt(i).elementAt(j).mType.ordinal()));
+					csvWriter.append(sDelim);
+				}
+			}
+			csvWriter.flush();
+			csvWriter.close();
+		} catch (FileNotFoundException e) {
+			// do nothing
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void Reinitialize() {

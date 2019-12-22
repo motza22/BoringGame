@@ -31,7 +31,7 @@ public class DungeonCrawl extends State implements KeyListener {
 	}
 
 	@Override
-	public void OnDisplay() {
+	public void Show() {
 		sJFrApp.Clear();
 	}
 

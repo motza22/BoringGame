@@ -9,7 +9,7 @@ import display.JFrameApplication;
 import display.SimpleRectangle;
 import display.Terminal;
 
-public class MapCreate extends State {
+public class ViewMap extends State {
 	private static JFrameApplication sJFrApp = null;
 	private static final data.MenuOption sOptionHeader = new data.MenuOption("Map Create\n\n", 0);
 	private static final data.MenuOption sOptionGenerateMap = new data.MenuOption("1. Generate New Map\n", 1);
@@ -46,8 +46,8 @@ public class MapCreate extends State {
 	@Override
 	public void HandleNotify(int aInputId) {
 		if(aInputId == sOptionGenerateMap.mId) {
-			mMapData.GenerateNew();
-			OnDisplay();
+			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
+			Show();
 		}
 		else { /* if(aInput == sOptionExit.mId) */
 			Game.GetInstance().Pop(1);
@@ -57,14 +57,12 @@ public class MapCreate extends State {
 	@Override
 	public void Initialize() {
 		sJFrApp = JFrameApplication.GetInstance();
-		mMapData = new Map(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
-		// todo:
-		// mMapData.LoadSave();
-		mMapData.GenerateNew();
+		mMapData = new Map();
+		mMapData.LoadSave();
 	}
 
 	@Override
-	public void OnDisplay() {
+	public void Show() {
 		ShowMap();
 		Terminal.DisplayMenu(sOptionHeader.mString);
 		Terminal.DisplayMenuWResponse(sOptionGenerateMap.mString + sOptionExit.mString, sOptionExit.mId);

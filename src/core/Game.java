@@ -40,7 +40,7 @@ public class Game extends Thread {
 			aPopCount--;
 		}
 		if(aDisplay && mStateStack.size() > 0) {
-			mStateStack.firstElement().OnDisplay();
+			mStateStack.firstElement().Show();
 		}
 		mStateLock.unlock();
 	}
@@ -49,7 +49,7 @@ public class Game extends Thread {
 		mStateLock.lock();
 		mStateStack.insertElementAt(aState, 0);
 		mStateStack.firstElement().Initialize();
-		mStateStack.firstElement().OnDisplay();
+		mStateStack.firstElement().Show();
 		mStateLock.unlock();
 	}
 
