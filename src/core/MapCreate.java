@@ -20,7 +20,7 @@ public class MapCreate extends State {
 		sJFrApp.Clear();
 		sJFrApp.setBackground(Color.LIGHT_GRAY);
 		mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
-			Color color = Color.WHITE;
+			Color color = Color.BLACK;
 
 			if(tile.mType == TileType.INACCESSIBLE) {
 				color = Color.DARK_GRAY;
