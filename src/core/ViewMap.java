@@ -1,24 +1,26 @@
 package core;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import data.Map;
 import data.MapTile;
 import data.MapTile.TileType;
+import display.Button;
 import display.JFrameApplication;
 import display.SimpleRectangle;
-import display.Terminal;
+import util.CommonTools;
 
-public class ViewMap extends State {
+public class ViewMap extends State implements MouseListener {
 	private static JFrameApplication sJFrApp = null;
-	private static final data.MenuOption sOptionHeader = new data.MenuOption("Map Create\n\n", 0);
-	private static final data.MenuOption sOptionGenerateMap = new data.MenuOption("1. Generate New Map\n", 1);
-	private static final data.MenuOption sOptionExit = new data.MenuOption("2. Exit\n", 2);
+	private static final Button sNewButton = new Button(JFrameApplication.WIDTH - Button.sWidth - 25,
+			JFrameApplication.HEIGHT - Button.sHeight - 25, "New");
+	private static final Button sExitButton = new Button( 25,
+			JFrameApplication.HEIGHT - Button.sHeight - 25, "Exit");
 	private Map mMapData;
 
 	private void ShowMap() {
-		sJFrApp.Clear();
-		sJFrApp.setBackground(Color.LIGHT_GRAY);
 		mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
 			Color color = Color.BLACK;
 
@@ -41,34 +43,53 @@ public class ViewMap extends State {
 	@Override
 	public void Close() {
 		sJFrApp.Clear();
-	}
-
-	@Override
-	public void HandleNotify(int aInputId) {
-		if(aInputId == sOptionGenerateMap.mId) {
-			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
-			Show();
-		}
-		else { /* if(aInput == sOptionExit.mId) */
-			Game.GetInstance().Pop(1);
-		}
+		sJFrApp.removeMouseListener(this);
 	}
 
 	@Override
 	public void Initialize() {
 		sJFrApp = JFrameApplication.GetInstance();
+		sJFrApp.addMouseListener(this);
 		mMapData = new Map();
 		mMapData.LoadSave();
 	}
 
 	@Override
 	public void Show() {
+		sJFrApp.Clear();
+		sJFrApp.setBackground(Color.LIGHT_GRAY);
 		ShowMap();
-		Terminal.DisplayMenu(sOptionHeader.mString);
-		Terminal.DisplayMenuWResponse(sOptionGenerateMap.mString + sOptionExit.mString, sOptionExit.mId);
+		sJFrApp.AddSprite(sNewButton);
+		sJFrApp.AddSprite(sExitButton);
 	}
 
 	@Override
 	public void Update() {
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(CommonTools.CheckBounds(e.getX(), e.getY(), sNewButton.GetRectangle())) {
+			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
+			Show();
+		} else if(CommonTools.CheckBounds(e.getX(), e.getY(), sExitButton.GetRectangle())) {
+			Game.GetInstance().Pop(1);
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
 	}
 }

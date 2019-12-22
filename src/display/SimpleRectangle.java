@@ -5,8 +5,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class SimpleRectangle extends Sprite {
-	private Rectangle mRectangle;
-	private Color mColor;
+	protected Rectangle mRectangle;
+	protected Color mColor;
 
 	public SimpleRectangle(int aX, int aY, int aWidth, int aHeight, Color aColor) {
 		mRectangle = new Rectangle(aX, aY, aWidth, aHeight);
@@ -16,6 +16,10 @@ public class SimpleRectangle extends Sprite {
 	public SimpleRectangle(Rectangle aRectangle, Color aColor) {
 		mRectangle = aRectangle;
 		mColor = aColor;
+	}
+
+	public final Rectangle GetRectangle() {
+		return mRectangle;
 	}
 
 	@Override

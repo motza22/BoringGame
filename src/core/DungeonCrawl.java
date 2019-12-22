@@ -21,10 +21,6 @@ public class DungeonCrawl extends State implements KeyListener {
 	}
 
 	@Override
-	public void HandleNotify(int aInputId) {
-	}
-
-	@Override
 	public void Initialize() {
 		sJFrApp = JFrameApplication.GetInstance();
 		sJFrApp.addKeyListener(this);

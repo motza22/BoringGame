@@ -22,12 +22,6 @@ public class Game extends Thread {
 	private Game() {
 	}
 
-	public void Notify(int aInputId) {
-		mStateLock.lock();
-		mStateStack.firstElement().HandleNotify(aInputId);
-		mStateLock.unlock();
-	}
-
 	public void Pop(int aPopCount) {
 		Pop(aPopCount, true);
 	}
