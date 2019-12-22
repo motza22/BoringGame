@@ -1,12 +1,11 @@
 package data;
 
-import java.awt.Rectangle;
 import java.util.Vector;
 
-public class MapData {
-	private Vector<Vector<Rectangle>> mTiles = new Vector<Vector<Rectangle>>();
+public class Map {
+	private Vector<Vector<MapTile>> mTiles = new Vector<Vector<MapTile>>();
 
-	public MapData() {
+	public Map() {
 	}
 
 	public void Clear() {
@@ -14,22 +13,18 @@ public class MapData {
 		mTiles.clear();
 	}
 
-	public final Vector<Vector<Rectangle>> Get() {
+	public final Vector<Vector<MapTile>> Get() {
 		return mTiles;
 	}
 
 	public void GenerateNew(int width, int height) {
 		Clear();
-		// todo
 		Save();
 	}
 
 	public void LoadSave() {
-		Clear();
-		// todo
 	}
 
 	public void Save() {
-
 	}
 }
