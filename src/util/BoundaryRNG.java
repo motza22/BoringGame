@@ -6,10 +6,10 @@ public class BoundaryRNG {
 	private static Random sRandom = new Random();
 
 	public static int Upper(int aUpperLimit) {
-		return sRandom.nextInt(aUpperLimit);
+		return sRandom.nextInt(aUpperLimit + 1);
 	}
 
 	public static int Range(int aLowerLimit, int aUpperLimit) {
-		return sRandom.nextInt(aUpperLimit - aLowerLimit) + aLowerLimit;
+		return Upper(aUpperLimit - aLowerLimit) + aLowerLimit;
 	}
 }

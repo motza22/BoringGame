@@ -12,8 +12,6 @@ public class MainMenu extends State implements MouseListener {
 	private static JFrameApplication sJFrApp = null;
 	private static final Button sPlayButton = new Button((JFrameApplication.WIDTH - Button.sWidth ) / 2,
 			(JFrameApplication.HEIGHT - Button.sHeight ) / 3, "Play");
-	private static final Button sMapButton = new Button((JFrameApplication.WIDTH - Button.sWidth ) / 2,
-			(JFrameApplication.HEIGHT - Button.sHeight ) / 2, "Map");
 	private static final Button sExitButton = new Button((JFrameApplication.WIDTH - Button.sWidth ) / 2,
 			((JFrameApplication.HEIGHT - Button.sHeight ) * 2) / 3, "Exit");
 
@@ -30,7 +28,6 @@ public class MainMenu extends State implements MouseListener {
 	@Override
 	public void Initialize() {
 		sJFrApp.addMouseListener(this);
-		Show();
 	}
 
 	@Override
@@ -38,7 +35,6 @@ public class MainMenu extends State implements MouseListener {
 		sJFrApp.Clear();
 		sJFrApp.setBackground(Color.LIGHT_GRAY);
 		sJFrApp.AddSprite(sPlayButton);
-		sJFrApp.AddSprite(sMapButton);
 		sJFrApp.AddSprite(sExitButton);
 	}
 
@@ -49,8 +45,6 @@ public class MainMenu extends State implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(sPlayButton.CheckBounds(e.getX(), e.getY())) {
-			Game.GetInstance().PopPush( 1, new DungeonCrawl());
-		} else if(sMapButton.CheckBounds(e.getX(), e.getY())) {
 			Game.GetInstance().Push(new ViewMap());
 		} else if(sExitButton.CheckBounds(e.getX(), e.getY())) {
 			sJFrApp.dispatchEvent(new WindowEvent(sJFrApp, WindowEvent.WINDOW_CLOSING));

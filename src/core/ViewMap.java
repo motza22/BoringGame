@@ -15,6 +15,8 @@ public class ViewMap extends State implements MouseListener {
 	private static JFrameApplication sJFrApp = null;
 	private static final Button sNewButton = new Button(JFrameApplication.WIDTH - Button.sWidth - 25,
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "New");
+	private static final Button sPlayButton = new Button( (JFrameApplication.WIDTH - Button.sWidth) / 2,
+			JFrameApplication.HEIGHT - Button.sHeight - 25, "Play");
 	private static final Button sExitButton = new Button( 25,
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "Exit");
 	private Map mMapData;
@@ -54,7 +56,6 @@ public class ViewMap extends State implements MouseListener {
 	@Override
 	public void Initialize() {
 		sJFrApp.addMouseListener(this);
-		Show();
 	}
 
 	@Override
@@ -63,6 +64,7 @@ public class ViewMap extends State implements MouseListener {
 		sJFrApp.setBackground(Color.LIGHT_GRAY);
 		ShowMap();
 		sJFrApp.AddSprite(sNewButton);
+		sJFrApp.AddSprite(sPlayButton);
 		sJFrApp.AddSprite(sExitButton);
 	}
 
@@ -75,6 +77,8 @@ public class ViewMap extends State implements MouseListener {
 		if(sNewButton.CheckBounds(e.getX(), e.getY())) {
 			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
 			Show();
+		} else if(sPlayButton.CheckBounds(e.getX(), e.getY())) {
+			Game.GetInstance().PopPush(1, new DungeonCrawl());
 		} else if(sExitButton.CheckBounds(e.getX(), e.getY())) {
 			Game.GetInstance().Pop(1);
 		}

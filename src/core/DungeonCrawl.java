@@ -32,38 +32,28 @@ public class DungeonCrawl extends State implements KeyListener {
 		sJFrApp = JFrameApplication.GetInstance();
 		mMapData = new Map();
 		mMapData.LoadSave();
-		if(!mMapData.IsSane()) {
+		if(!mMapData.IsSane() || !mMapData.IsPlayable()) {
 			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
 		}
-
-		boolean isSane = false;
-		while(!isSane) {
-			isSane = true;
-			mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
-				if(tile.mType == TileType.PLAYER) {
-					mPlayerX = tile.mX;
-					mPlayerY = tile.mY;
-				} else if(tile.mType == TileType.GOAL) {
-					mGoalX = tile.mX;
-					mGoalY = tile.mY;
-				}
-			}));
-
-			if( mPlayerX == -1 || mPlayerY == -1 || mGoalX == -1 || mGoalY == -1) {
-				mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
-				isSane = false;
+		mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
+			if(tile.mType == TileType.PLAYER) {
+				mPlayerX = tile.mX;
+				mPlayerY = tile.mY;
+			} else if(tile.mType == TileType.GOAL) {
+				mGoalX = tile.mX;
+				mGoalY = tile.mY;
 			}
-		}
+		}));
 	}
 
-	private void Exit() {
-		Game.GetInstance().PopPush( 1, new MainMenu());
-		Game.GetInstance().Push(new ViewMap());
+	private void EndGame() {
+		mMapData.Save();
+		Game.GetInstance().PopPush(1, new ViewMap());
 	}
 
 	private void TakeTurn() {
 		if(mPlayerX == mGoalX && mPlayerY == mGoalY) {
-			Exit();
+			EndGame();
 		} else {
 			boolean playerAlive = true;
 			int nodeMinX = mMapData.CheckWidth(mPlayerX - sThreatRadius);
@@ -75,16 +65,12 @@ public class DungeonCrawl extends State implements KeyListener {
 				for(int j = nodeMinY; j <= nodeMaxY; j++) {
 					if(Math.sqrt(Math.pow((mPlayerX - i), 2) + Math.pow((mPlayerY - j), 2)) < sVisibleRadius) {
 						if(mMapData.GetTile(i, j).mType == TileType.ENEMY) {
-							int retryCount = 3;
-							while(retryCount-- >= 0) {
-								int newX = mMapData.CheckWidth(BoundaryRNG.Range(i-1, i+1));
-								int newY = mMapData.CheckHeight(BoundaryRNG.Range(j-1, j+1));
-								if(mMapData.MoveTile(i, j, newX, newY, TileType.INACCESSIBLE, TileType.GOAL, TileType.ENEMY)) {
-									retryCount = -1;
-									if(mPlayerX == newX && mPlayerY == newY) {
-										playerAlive = false;
-										Exit();
-									}
+							int newX = mMapData.CheckWidth(BoundaryRNG.Range(i-1, i+1));
+							int newY = mMapData.CheckHeight(BoundaryRNG.Range(j-1, j+1));
+							if(mMapData.MoveTile(i, j, newX, newY, TileType.INACCESSIBLE, TileType.GOAL, TileType.ENEMY)) {
+								if(mPlayerX == newX && mPlayerY == newY) {
+									playerAlive = false;
+									EndGame();
 								}
 							}
 						}
@@ -131,13 +117,11 @@ public class DungeonCrawl extends State implements KeyListener {
 	public void Close() {
 		sJFrApp.removeKeyListener(this);
 		sJFrApp.Clear();
-		mMapData.Save();
 	}
 
 	@Override
 	public void Initialize() {
 		sJFrApp.addKeyListener(this);
-		Show();
 	}
 
 	@Override
@@ -190,7 +174,7 @@ public class DungeonCrawl extends State implements KeyListener {
 			break;
 
 		case KeyEvent.VK_K:
-			Game.GetInstance().PopPush( 1, new MainMenu());
+			EndGame();
 			break;
 		}
 		if(consumed) {

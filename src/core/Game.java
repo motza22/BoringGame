@@ -35,6 +35,7 @@ public class Game extends Thread {
 		}
 		if(aInitialize && mStateStack.size() > 0) {
 			mStateStack.firstElement().Initialize();
+			mStateStack.firstElement().Show();
 		}
 		mStateLock.unlock();
 	}
@@ -46,6 +47,7 @@ public class Game extends Thread {
 		}
 		mStateStack.insertElementAt(aState, 0);
 		mStateStack.firstElement().Initialize();
+		mStateStack.firstElement().Show();
 		mStateLock.unlock();
 	}
 

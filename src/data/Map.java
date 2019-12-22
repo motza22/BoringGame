@@ -93,6 +93,21 @@ public class Map {
 		return mWidth != 0 && mHeight != 0;
 	}
 
+	public boolean IsPlayable() {
+		boolean playerFound = false;
+		boolean goalFound = false;
+		for(int i=0; i<mWidth; i++) {
+			for( int j=0; j<mHeight; j++) {
+				if(GetTile(i, j).mType == TileType.PLAYER) {
+					playerFound = true;
+				} else if(GetTile(i, j).mType == TileType.GOAL) {
+					goalFound = true;
+				}
+			}
+		}
+		return playerFound && goalFound;
+	}
+
 	public void LoadSave() {
 		try {
 			BufferedReader csvReader = new BufferedReader(new FileReader(sPath));
@@ -126,7 +141,7 @@ public class Map {
 		if(aOrigX != aNewX || aOrigY != aNewY) {
 			doMove = true;
 			for(TileType tileType : aInvalidTiles) {
-				if( GetTile(aNewX, aNewY).mType == tileType ) {
+				if(GetTile(aNewX, aNewY).mType == tileType) {
 					doMove = false;
 				}
 			}
@@ -265,8 +280,8 @@ public class Map {
 
 				while(runCount++ < 8 && groupSize > 0)
 				{
-					enemyX += CheckWidth(BoundaryRNG.Range(-1, 1));
-					enemyY += CheckHeight(BoundaryRNG.Range(-1, 1));
+					enemyX = CheckWidth(enemyX + BoundaryRNG.Range(-1, 1));
+					enemyY = CheckHeight(enemyY + BoundaryRNG.Range(-1, 1));
 
 					if(GetTile(enemyX, enemyY).mType == TileType.EMPTY)
 					{
