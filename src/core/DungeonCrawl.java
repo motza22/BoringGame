@@ -28,6 +28,32 @@ public class DungeonCrawl extends State implements KeyListener {
 		mGoalX = -1;
 		mGoalY = -1;
 		mPlayerSpeed = 1;
+
+		sJFrApp = JFrameApplication.GetInstance();
+		mMapData = new Map();
+		mMapData.LoadSave();
+		if(!mMapData.IsSane()) {
+			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
+		}
+
+		boolean isSane = false;
+		while(!isSane) {
+			isSane = true;
+			mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
+				if(tile.mType == TileType.PLAYER) {
+					mPlayerX = tile.mX;
+					mPlayerY = tile.mY;
+				} else if(tile.mType == TileType.GOAL) {
+					mGoalX = tile.mX;
+					mGoalY = tile.mY;
+				}
+			}));
+
+			if( mPlayerX == -1 || mPlayerY == -1 || mGoalX == -1 || mGoalY == -1) {
+				mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
+				isSane = false;
+			}
+		}
 	}
 
 	private void Exit() {
@@ -53,7 +79,7 @@ public class DungeonCrawl extends State implements KeyListener {
 							while(retryCount-- >= 0) {
 								int newX = mMapData.CheckWidth(BoundaryRNG.Range(i-1, i+1));
 								int newY = mMapData.CheckHeight(BoundaryRNG.Range(j-1, j+1));
-								if(mMapData.MoveTile(i, j, newX, newY, TileType.ENEMY)) {
+								if(mMapData.MoveTile(i, j, newX, newY, TileType.INACCESSIBLE, TileType.GOAL, TileType.ENEMY)) {
 									retryCount = -1;
 									if(mPlayerX == newX && mPlayerY == newY) {
 										playerAlive = false;
@@ -110,32 +136,8 @@ public class DungeonCrawl extends State implements KeyListener {
 
 	@Override
 	public void Initialize() {
-		sJFrApp = JFrameApplication.GetInstance();
 		sJFrApp.addKeyListener(this);
-		mMapData = new Map();
-		mMapData.LoadSave();
-		if(!mMapData.IsSane()) {
-			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
-		}
-
-		boolean isSane = false;
-		while(!isSane) {
-			isSane = true;
-			mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
-				if(tile.mType == TileType.PLAYER) {
-					mPlayerX = tile.mX;
-					mPlayerY = tile.mY;
-				} else if(tile.mType == TileType.GOAL) {
-					mGoalX = tile.mX;
-					mGoalY = tile.mY;
-				}
-			}));
-
-			if( mPlayerX == -1 || mPlayerY == -1 || mGoalX == -1 || mGoalY == -1) {
-				mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
-				isSane = false;
-			}
-		}
+		Show();
 	}
 
 	@Override

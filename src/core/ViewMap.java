@@ -19,6 +19,12 @@ public class ViewMap extends State implements MouseListener {
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "Exit");
 	private Map mMapData;
 
+	public ViewMap() {
+		sJFrApp = JFrameApplication.GetInstance();
+		mMapData = new Map();
+		mMapData.LoadSave();
+	}
+
 	private void ShowMap() {
 		mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
 			Color color = Color.BLACK;
@@ -41,16 +47,14 @@ public class ViewMap extends State implements MouseListener {
 
 	@Override
 	public void Close() {
-		sJFrApp.Clear();
 		sJFrApp.removeMouseListener(this);
+		sJFrApp.Clear();
 	}
 
 	@Override
 	public void Initialize() {
-		sJFrApp = JFrameApplication.GetInstance();
 		sJFrApp.addMouseListener(this);
-		mMapData = new Map();
-		mMapData.LoadSave();
+		Show();
 	}
 
 	@Override

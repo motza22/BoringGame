@@ -26,24 +26,26 @@ public class Game extends Thread {
 		Pop(aPopCount, true);
 	}
 
-	public void Pop(int aPopCount, boolean aDisplay) {
+	public void Pop(int aPopCount, boolean aInitialize) {
 		mStateLock.lock();
 		while(mStateStack.size() > 0 && aPopCount > 0) {
 			mStateStack.firstElement().Close();
 			mStateStack.remove(mStateStack.firstElement());
 			aPopCount--;
 		}
-		if(aDisplay && mStateStack.size() > 0) {
-			mStateStack.firstElement().Show();
+		if(aInitialize && mStateStack.size() > 0) {
+			mStateStack.firstElement().Initialize();
 		}
 		mStateLock.unlock();
 	}
 
 	public void Push(core.State aState) {
 		mStateLock.lock();
+		if(mStateStack.size() > 0) {
+			mStateStack.firstElement().Close();
+		}
 		mStateStack.insertElementAt(aState, 0);
 		mStateStack.firstElement().Initialize();
-		mStateStack.firstElement().Show();
 		mStateLock.unlock();
 	}
 

@@ -18,18 +18,19 @@ public class MainMenu extends State implements MouseListener {
 			((JFrameApplication.HEIGHT - Button.sHeight ) * 2) / 3, "Exit");
 
 	public MainMenu() {
+		sJFrApp = JFrameApplication.GetInstance();
 	}
 
 	@Override
 	public void Close() {
-		sJFrApp.Clear();
 		sJFrApp.removeMouseListener(this);
+		sJFrApp.Clear();
 	}
 
 	@Override
 	public void Initialize() {
-		sJFrApp = JFrameApplication.GetInstance();
 		sJFrApp.addMouseListener(this);
+		Show();
 	}
 
 	@Override

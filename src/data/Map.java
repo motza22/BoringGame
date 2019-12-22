@@ -121,11 +121,17 @@ public class Map {
 		return MoveTile(aOrigX, aOrigY, aNewX, aNewY, TileType.INACCESSIBLE);
 	}
 
-	public boolean MoveTile(int aOrigX, int aOrigY, int aNewX, int aNewY, TileType aTileType) {
-		if( (aOrigX != aNewX || aOrigY != aNewY ) &&
-				GetTile(aNewX, aNewY).mType != TileType.INACCESSIBLE &&
-				GetTile(aNewX, aNewY).mType != TileType.GOAL &&
-				GetTile(aNewX, aNewY).mType != aTileType) {
+	public boolean MoveTile(int aOrigX, int aOrigY, int aNewX, int aNewY, TileType ...aInvalidTiles) {
+		boolean doMove = false;
+		if(aOrigX != aNewX || aOrigY != aNewY) {
+			doMove = true;
+			for(TileType tileType : aInvalidTiles) {
+				if( GetTile(aNewX, aNewY).mType == tileType ) {
+					doMove = false;
+				}
+			}
+		}
+		if(doMove) {
 			GetTile(aNewX, aNewY).mType = GetTile(aOrigX, aOrigY).mType;
 			GetTile(aOrigX, aOrigY).mType = TileType.EMPTY;
 			return true;
