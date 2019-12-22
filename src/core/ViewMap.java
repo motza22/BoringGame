@@ -10,7 +10,6 @@ import data.MapTile.TileType;
 import display.Button;
 import display.JFrameApplication;
 import display.SimpleRectangle;
-import util.CommonTools;
 
 public class ViewMap extends State implements MouseListener {
 	private static JFrameApplication sJFrApp = null;
@@ -69,10 +68,10 @@ public class ViewMap extends State implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(CommonTools.CheckBounds(e.getX(), e.getY(), sNewButton.GetRectangle())) {
+		if(sNewButton.CheckBounds(e.getX(), e.getY())) {
 			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
 			Show();
-		} else if(CommonTools.CheckBounds(e.getX(), e.getY(), sExitButton.GetRectangle())) {
+		} else if(sExitButton.CheckBounds(e.getX(), e.getY())) {
 			Game.GetInstance().Pop(1);
 		}
 	}

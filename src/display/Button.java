@@ -13,6 +13,13 @@ public class Button extends SimpleRectangle {
 		mString = aString;
 	}
 
+	public boolean CheckBounds(int aX, int aY) {
+		return aX >= mRectangle.x &&
+				aX < mRectangle.x + mRectangle.width &&
+				aY >= mRectangle.y &&
+				aY < mRectangle.y + mRectangle.height;
+	}
+
 	@Override
 	public void Draw(Graphics aGraphics) {
 		super.Draw(aGraphics);

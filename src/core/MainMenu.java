@@ -3,10 +3,10 @@ package core;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
 
 import display.Button;
 import display.JFrameApplication;
-import util.CommonTools;
 
 public class MainMenu extends State implements MouseListener {
 	private static JFrameApplication sJFrApp = null;
@@ -47,11 +47,12 @@ public class MainMenu extends State implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(CommonTools.CheckBounds(e.getX(), e.getY(), sPlayButton.GetRectangle())) {
+		if(sPlayButton.CheckBounds(e.getX(), e.getY())) {
 			Game.GetInstance().PopPush( 1, new DungeonCrawl());
-		} else if(CommonTools.CheckBounds(e.getX(), e.getY(), sMapButton.GetRectangle())) {
+		} else if(sMapButton.CheckBounds(e.getX(), e.getY())) {
 			Game.GetInstance().Push(new ViewMap());
-		} else if(CommonTools.CheckBounds(e.getX(), e.getY(), sExitButton.GetRectangle())) {
+		} else if(sExitButton.CheckBounds(e.getX(), e.getY())) {
+			sJFrApp.dispatchEvent(new WindowEvent(sJFrApp, WindowEvent.WINDOW_CLOSING));
 			Game.GetInstance().Pop(1);
 		}
 	}

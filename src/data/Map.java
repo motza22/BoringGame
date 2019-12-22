@@ -27,6 +27,26 @@ public class Map {
 		mHeight = aHeight;
 	}
 
+	public int CheckWidth(int aX) {
+		if(aX < 0) {
+			return 0;
+		}
+		if(aX > mWidth - 1) {
+			return mWidth - 1;
+		}
+		return aX;
+	}
+
+	public int CheckHeight(int aY) {
+		if(aY < 0) {
+			return 0;
+		}
+		if(aY > mHeight - 1) {
+			return mHeight - 1;
+		}
+		return aY;
+	}
+
 	public void Clear() {
 		mTiles.forEach((vector) -> vector.clear());
 		mTiles.clear();
@@ -65,6 +85,10 @@ public class Map {
 		return mTiles;
 	}
 
+	public boolean IsSane() {
+		return mWidth != 0 && mHeight != 0;
+	}
+
 	public void LoadSave() {
 		try {
 			BufferedReader csvReader = new BufferedReader(new FileReader(sPath));
@@ -87,6 +111,15 @@ public class Map {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public boolean MoveTile(int aOrigX, int aOrigY, int aNewX, int aNewY) {
+		if(mTiles.elementAt(aNewX).elementAt(aNewY).mType != TileType.INACCESSIBLE) {
+			mTiles.elementAt(aNewX).elementAt(aNewY).mType = mTiles.elementAt(aOrigX).elementAt(aOrigY).mType;
+			mTiles.elementAt(aOrigX).elementAt(aOrigY).mType = TileType.EMPTY;
+			return true;
+		}
+		return false;
 	}
 
 	public void Save() {
@@ -121,26 +154,6 @@ public class Map {
 				vector.add(new MapTile(i, j, TileType.INACCESSIBLE));
 			}
 		}
-	}
-
-	private int CheckWidth(int aX) {
-		if(aX < 0) {
-			return 0;
-		}
-		if(aX > mWidth - 1) {
-			return mWidth - 1;
-		}
-		return aX;
-	}
-
-	private int CheckHeight(int aY) {
-		if(aY < 0) {
-			return 0;
-		}
-		if(aY > mHeight - 1) {
-			return mHeight - 1;
-		}
-		return aY;
 	}
 
 	private void CreatePlayableNode(TileType aTileType) {
