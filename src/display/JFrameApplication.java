@@ -24,23 +24,23 @@ public class JFrameApplication extends JFrame implements Runnable {
 		}
 		return sApplication;
 	}
-	
+
 	private JFrameApplication() {
 		setSize(WIDTH, HEIGHT);
-        setResizable(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBackground(Color.WHITE);
-        setVisible(true);
-        setTitle("Boring Game.");
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBackground(Color.WHITE);
+		setVisible(true);
+		setTitle("Boring Game.");
 	}
-	
+
 	public void AddSprite(Sprite aSprite) {
 		mSpriteLock.lock();
 		mSprites.add(aSprite);
 		mSpriteLock.unlock();
 	}
-	
-	public void Draw(Graphics aGraphics) {		
+
+	public void Draw(Graphics aGraphics) {
 		mSpriteLock.lock();
 		for(int i=0; i<mSprites.size(); i++) {
 			Sprite sprite = mSprites.get(i);
@@ -48,7 +48,7 @@ public class JFrameApplication extends JFrame implements Runnable {
 		}
 		mSpriteLock.unlock();
 	}
-	
+
 	public void Clear() {
 		mSpriteLock.lock();
 		mSprites.clear();
@@ -62,7 +62,7 @@ public class JFrameApplication extends JFrame implements Runnable {
 		}
 		mSpriteLock.unlock();
 	}
-	
+
 	public void RemoveSprite(int aId) {
 		mSpriteLock.lock();
 		for(int i=0; i<mSprites.size(); i++) {
@@ -74,14 +74,14 @@ public class JFrameApplication extends JFrame implements Runnable {
 		}
 		mSpriteLock.unlock();
 	}
-	
+
 	@Override
-    public void paint(Graphics aGraphics) {
-        Image image = createImage(getWidth(), getHeight());
-        Graphics background = image.getGraphics();
-        Draw(background);
-        aGraphics.drawImage(image, 0, 0, this);
-    }
+	public void paint(Graphics aGraphics) {
+		Image image = createImage(getWidth(), getHeight());
+		Graphics background = image.getGraphics();
+		Draw(background);
+		aGraphics.drawImage(image, 0, 0, this);
+	}
 
 	@Override
 	public void run() {

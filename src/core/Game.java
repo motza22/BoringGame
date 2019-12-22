@@ -7,45 +7,53 @@ public class Game extends Thread {
 	private final ReentrantLock mStateLock = new ReentrantLock();
 	private static Game sInstance = null;
 	private Vector<core.State> mStateStack = new Vector<core.State>();
-	
+
 	private Game() {
 	}
-	
+
 	public static Game GetInstance() {
 		if(sInstance == null) {
 			sInstance = new Game();
 		}
 		return sInstance;
 	}
-	
+
 	public void Notify(int aInputId) {
 		mStateLock.lock();
 		mStateStack.firstElement().HandleNotify(aInputId);
 		mStateLock.unlock();
 	}
-	
+
 	public void Pop(int aPopCount) {
+		Pop(aPopCount, true);
+	}
+
+	public void Pop(int aPopCount, boolean aDisplay) {
 		mStateLock.lock();
-		if(mStateStack.size() > 0 && aPopCount > 0) {
+		while(mStateStack.size() > 0 && aPopCount > 0) {
 			mStateStack.firstElement().Close();
 			mStateStack.remove(mStateStack.firstElement());
 			aPopCount--;
 		}
+		if(aDisplay && mStateStack.size() > 0) {
+			mStateStack.firstElement().OnDisplay();
+		}
 		mStateLock.unlock();
 	}
-	
+
 	public void Push(core.State aState) {
 		mStateLock.lock();
 		mStateStack.insertElementAt(aState, 0);
 		mStateStack.firstElement().Initialize();
+		mStateStack.firstElement().OnDisplay();
 		mStateLock.unlock();
 	}
-	
+
 	public void PopPush(int aPopCount, core.State aState) {
-		Pop(aPopCount);
+		Pop(aPopCount, false);
 		Push(aState);
 	}
-	
+
 	@Override
 	public void run() {
 		Push(new MainMenu());
@@ -66,7 +74,7 @@ public class Game extends Thread {
 			}
 		}
 	}
-	
+
 	public static void main(String [] args) {
 		Game.GetInstance().start();
 	}

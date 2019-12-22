@@ -7,9 +7,14 @@ import java.awt.Rectangle;
 public class SimpleRectangle extends Sprite {
 	private Rectangle mRectangle;
 	private Color mColor;
-	
+
 	public SimpleRectangle(int aX, int aY, int aWidth, int aHeight, Color aColor) {
 		mRectangle = new Rectangle(aX, aY, aWidth, aHeight);
+		mColor = aColor;
+	}
+
+	public SimpleRectangle(Rectangle aRectangle, Color aColor) {
+		mRectangle = aRectangle;
 		mColor = aColor;
 	}
 
