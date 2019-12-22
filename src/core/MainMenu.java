@@ -1,15 +1,14 @@
 package core;
 
 import java.awt.Color;
-import java.util.Random;
 
 import display.JFrameApplication;
 import display.SimpleRectangle;
 import display.Terminal;
+import util.BoundaryRNG;
 
 public class MainMenu extends State {
-	private static JFrameApplication mJFrApp = null;
-	private static Random mRandom = new Random();
+	private static JFrameApplication sJFrApp = null;
 
 	private static final data.MenuOption sOptionHeader = new data.MenuOption("Main Menu\n\n", 0);
 	private static final data.MenuOption sOptionPlay = new data.MenuOption("1. Play Game\n", 1);
@@ -21,7 +20,7 @@ public class MainMenu extends State {
 
 	@Override
 	public void Close() {
-		mJFrApp.Clear();
+		sJFrApp.Clear();
 	}
 
 	@Override
@@ -39,18 +38,18 @@ public class MainMenu extends State {
 
 	@Override
 	public void Initialize() {
-		mJFrApp = JFrameApplication.GetInstance();
+		sJFrApp = JFrameApplication.GetInstance();
 	}
 
 	@Override
 	public void OnDisplay() {
-		mJFrApp.Clear();
+		sJFrApp.Clear();
 		for(int i=0; i<100; i++) {
-			int width = mRandom.nextInt(32);
-			int height = mRandom.nextInt(32);
-			int x = mRandom.nextInt(JFrameApplication.WIDTH - width);
-			int y = mRandom.nextInt(JFrameApplication.HEIGHT - height);
-			mJFrApp.AddSprite(new SimpleRectangle(x, y, width, height, Color.YELLOW));
+			int width = BoundaryRNG.Upper(32);
+			int height = BoundaryRNG.Upper(32);
+			int x = BoundaryRNG.Upper(JFrameApplication.WIDTH - width);
+			int y = BoundaryRNG.Upper(JFrameApplication.HEIGHT - height);
+			sJFrApp.AddSprite(new SimpleRectangle(x, y, width, height, Color.YELLOW));
 		}
 
 		Terminal.DisplayMenu(sOptionHeader.mString);

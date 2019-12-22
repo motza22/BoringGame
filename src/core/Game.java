@@ -8,7 +8,8 @@ public class Game extends Thread {
 	private static Game sInstance = null;
 	private Vector<core.State> mStateStack = new Vector<core.State>();
 
-	private Game() {
+	public static void main(String [] args) {
+		Game.GetInstance().start();
 	}
 
 	public static Game GetInstance() {
@@ -16,6 +17,9 @@ public class Game extends Thread {
 			sInstance = new Game();
 		}
 		return sInstance;
+	}
+
+	private Game() {
 	}
 
 	public void Notify(int aInputId) {
@@ -73,9 +77,5 @@ public class Game extends Thread {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public static void main(String [] args) {
-		Game.GetInstance().start();
 	}
 }

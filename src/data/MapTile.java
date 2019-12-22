@@ -4,14 +4,14 @@ import java.awt.Rectangle;
 
 public class MapTile {
 	public enum TileType {
+		EMPTY,
 		INACCESSIBLE,
-		FREE,
 		PLAYER,
 		ENEMY,
 		GOAL
 	}
-	public static final int sTileSize = 10;
-	public final TileType mType;
+	public static final int sTileSize = 5;
+	public TileType mType;
 	public final int mX;
 	public final int mY;
 

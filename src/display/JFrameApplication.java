@@ -11,8 +11,8 @@ import javax.swing.JFrame;
 public class JFrameApplication extends JFrame implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private static JFrameApplication sApplication = null;
-	public static final int WIDTH = 640;
-	public static final int HEIGHT = 480;
+	public static final int WIDTH = 1500;
+	public static final int HEIGHT = 1000;
 	private Vector<Sprite> mSprites = new Vector<Sprite>();
 	private final ReentrantLock mSpriteLock = new ReentrantLock();
 
@@ -53,6 +53,7 @@ public class JFrameApplication extends JFrame implements Runnable {
 		mSpriteLock.lock();
 		mSprites.clear();
 		mSpriteLock.unlock();
+		setBackground(Color.WHITE);
 	}
 
 	public void RemoveLastSprite() {
