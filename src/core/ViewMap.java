@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import data.Map;
 import data.MapTile;
 import data.MapTile.TileType;
+import data.MapUtil;
 import display.Button;
 import display.JFrameApplication;
 import display.SimpleRectangle;
@@ -19,16 +20,18 @@ public class ViewMap extends State implements MouseListener {
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "Play");
 	private static final Button sExitButton = new Button( 25,
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "Exit");
-	private Map mMapData;
+	private Map mMap;
 
 	public ViewMap() {
 		sJFrApp = JFrameApplication.GetInstance();
-		mMapData = new Map();
-		mMapData.LoadSave();
+		mMap = MapUtil.LoadSave();
+		if(mMap == null) {
+			mMap = MapUtil.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
+		}
 	}
 
 	private void ShowMap() {
-		mMapData.Get().forEach((vector) -> vector.forEach((tile) -> {
+		mMap.Get().forEach((vector) -> vector.forEach((tile) -> {
 			Color color = Color.BLACK;
 
 			if(tile.mType == TileType.EMPTY) {
@@ -75,7 +78,7 @@ public class ViewMap extends State implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(sNewButton.CheckBounds(e.getX(), e.getY())) {
-			mMapData.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
+			mMap = MapUtil.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
 			Show();
 		} else if(sPlayButton.CheckBounds(e.getX(), e.getY())) {
 			Game.GetInstance().PopPush(1, new DungeonCrawl());
