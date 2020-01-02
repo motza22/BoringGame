@@ -13,4 +13,8 @@ public class Position {
 		mX = aPos.mX;
 		mY = aPos.mY;
 	}
+
+	public boolean Compare(Position aPos) {
+		return mX == aPos.mX && mY == aPos.mY;
+	}
 }

@@ -96,9 +96,11 @@ public class DungeonCrawl extends State implements KeyListener {
 
 	@Override
 	public void Show() {
-		sJFrApp.Clear();
 		sJFrApp.setBackground(Color.BLACK);
+		sJFrApp.mSpriteLock.lock();
+		sJFrApp.Clear();
 		ShowVisibleArea();
+		sJFrApp.mSpriteLock.unlock();
 	}
 
 	@Override
@@ -112,28 +114,28 @@ public class DungeonCrawl extends State implements KeyListener {
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_W:
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY - mPlayerSpeed);
-			if( mMap.MoveTile(mPlayerPos, newPos) ) {
+			if(mMap.MoveTile(mPlayerPos, newPos) ) {
 				mPlayerPos.mY = newPos.mY;
 			}
 			break;
 
 		case KeyEvent.VK_S:
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY + mPlayerSpeed);
-			if( mMap.MoveTile(mPlayerPos, newPos) ) {
+			if(mMap.MoveTile(mPlayerPos, newPos) ) {
 				mPlayerPos.mY = newPos.mY;
 			}
 			break;
 
 		case KeyEvent.VK_A:
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX - mPlayerSpeed);
-			if( mMap.MoveTile(mPlayerPos, newPos) ) {
+			if(mMap.MoveTile(mPlayerPos, newPos) ) {
 				mPlayerPos.mX = newPos.mX;
 			}
 			break;
 
 		case KeyEvent.VK_D:
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX + mPlayerSpeed);
-			if( mMap.MoveTile(mPlayerPos, newPos) ) {
+			if(mMap.MoveTile(mPlayerPos, newPos) ) {
 				mPlayerPos.mX = newPos.mX;
 			}
 			break;

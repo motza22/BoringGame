@@ -8,7 +8,8 @@ public class MapTile {
 		INACCESSIBLE,
 		PLAYER,
 		ENEMY,
-		GOAL
+		GOAL,
+		HEATMAP,
 	}
 	public static final int sTileSize = 5;
 	public TileType mType;

@@ -34,11 +34,13 @@ public class MainMenu extends State implements MouseListener {
 
 	@Override
 	public void Show() {
-		sJFrApp.Clear();
 		sJFrApp.setBackground(Color.LIGHT_GRAY);
+		sJFrApp.mSpriteLock.lock();
+		sJFrApp.Clear();
 		sJFrApp.AddSprite(sPlayButton);
 		sJFrApp.AddSprite(sMapButton);
 		sJFrApp.AddSprite(sExitButton);
+		sJFrApp.mSpriteLock.unlock();
 	}
 
 	@Override

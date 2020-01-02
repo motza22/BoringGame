@@ -14,7 +14,7 @@ public class JFrameApplication extends JFrame implements Runnable {
 	public static final int WIDTH = 1500;
 	public static final int HEIGHT = 1000;
 	private Vector<Sprite> mSprites = new Vector<Sprite>();
-	private final ReentrantLock mSpriteLock = new ReentrantLock();
+	public final ReentrantLock mSpriteLock = new ReentrantLock();
 
 	public static JFrameApplication GetInstance() {
 		if(sApplication == null) {
@@ -53,7 +53,6 @@ public class JFrameApplication extends JFrame implements Runnable {
 		mSpriteLock.lock();
 		mSprites.clear();
 		mSpriteLock.unlock();
-		setBackground(Color.WHITE);
 	}
 
 	public void RemoveLastSprite() {

@@ -9,6 +9,19 @@ public class Map {
 	public final int mHeight;
 	private Vector<Vector<MapTile>> mTiles = new Vector<Vector<MapTile>>();
 
+	public Map(Map aMap) {
+		mWidth = aMap.mWidth;
+		mHeight = aMap.mHeight;
+
+		for(int i=0; i<mWidth; i++) {
+			Vector<MapTile> vector = new Vector<MapTile>();
+			mTiles.add(vector);
+			for(int j=0; j<mHeight; j++) {
+				vector.add(new MapTile(new Position(i, j), aMap.GetTile(new Position(i, j)).mType));
+			}
+		}
+	}
+
 	public Map(int aWidth, int aHeight)  {
 		mWidth = aWidth;
 		mHeight = aHeight;
@@ -75,7 +88,7 @@ public class Map {
 
 	public boolean MoveTile(Position aOrigPos, Position aNewPos, TileType ...aInvalidTiles) {
 		boolean doMove = false;
-		if(aOrigPos.mX != aNewPos.mX || aOrigPos.mY != aNewPos.mY) {
+		if(!aOrigPos.Compare(aNewPos)) {
 			doMove = true;
 			for(TileType tileType : aInvalidTiles) {
 				if(GetTile(aNewPos).mType == tileType) {

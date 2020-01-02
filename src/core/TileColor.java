@@ -21,6 +21,8 @@ public abstract class TileColor {
 			color = Color.RED;
 		} else if(mType == TileType.GOAL) {
 			color = Color.YELLOW;
+		} else if(mType == TileType.HEATMAP) {
+			color = Color.GREEN;
 		}
 		return color;
 	}
