@@ -79,20 +79,7 @@ public class DungeonCrawl extends State implements KeyListener {
 			for(int j = visibleArea.mMinPos.mY; j <= visibleArea.mMaxPos.mY; j++) {
 				if(i == mMap.CheckWidth(i) && j == mMap.CheckHeight(j) && visibleArea.CheckCircle(i, j)) {
 					MapTile tile = mMap.GetTile(i, j);
-					Color color = Color.BLACK;
-
-					if(tile.mType == TileType.INACCESSIBLE) {
-						color = Color.DARK_GRAY;
-					} else if(tile.mType == TileType.EMPTY) {
-						color = Color.LIGHT_GRAY;
-					} else if(tile.mType == TileType.PLAYER) {
-						color = Color.BLUE;
-					} else if(tile.mType == TileType.ENEMY) {
-						color = Color.RED;
-					} else if(tile.mType == TileType.GOAL) {
-						color = Color.YELLOW;
-					}
-					sJFrApp.AddSprite(new SimpleRectangle(tile.GetRectangle(), color));
+					sJFrApp.AddSprite(new SimpleRectangle(tile.GetRectangle(), TileColor.GetColor(tile.mType)));
 				}
 			}
 		}
