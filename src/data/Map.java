@@ -17,7 +17,7 @@ public class Map {
 			Vector<MapTile> vector = new Vector<MapTile>();
 			mTiles.add(vector);
 			for(int j=0; j<mHeight; j++) {
-				vector.add(new MapTile(i, j, TileType.INACCESSIBLE));
+				vector.add(new MapTile(new Position(i, j), TileType.INACCESSIBLE));
 			}
 		}
 	}
@@ -46,8 +46,8 @@ public class Map {
 		return mTiles;
 	}
 
-	public MapTile GetTile(int aX, int aY) {
-		return mTiles.elementAt(aX).elementAt(aY);
+	public MapTile GetTile(Position aPos) {
+		return mTiles.elementAt(aPos.mX).elementAt(aPos.mY);
 	}
 
 	public boolean IsSane() {
@@ -59,9 +59,9 @@ public class Map {
 		boolean goalFound = false;
 		for(int i=0; i<mWidth; i++) {
 			for( int j=0; j<mHeight; j++) {
-				if(GetTile(i, j).mType == TileType.PLAYER) {
+				if(GetTile(new Position(i, j)).mType == TileType.PLAYER) {
 					playerFound = true;
-				} else if(GetTile(i, j).mType == TileType.GOAL) {
+				} else if(GetTile(new Position(i, j)).mType == TileType.GOAL) {
 					goalFound = true;
 				}
 			}
@@ -69,29 +69,29 @@ public class Map {
 		return playerFound && goalFound;
 	}
 
-	public boolean MoveTile(int aOrigX, int aOrigY, int aNewX, int aNewY) {
-		return MoveTile(aOrigX, aOrigY, aNewX, aNewY, TileType.INACCESSIBLE);
+	public boolean MoveTile(Position aOrigPos, Position aNewPos) {
+		return MoveTile(aOrigPos, aNewPos, TileType.INACCESSIBLE);
 	}
 
-	public boolean MoveTile(int aOrigX, int aOrigY, int aNewX, int aNewY, TileType ...aInvalidTiles) {
+	public boolean MoveTile(Position aOrigPos, Position aNewPos, TileType ...aInvalidTiles) {
 		boolean doMove = false;
-		if(aOrigX != aNewX || aOrigY != aNewY) {
+		if(aOrigPos.mX != aNewPos.mX || aOrigPos.mY != aNewPos.mY) {
 			doMove = true;
 			for(TileType tileType : aInvalidTiles) {
-				if(GetTile(aNewX, aNewY).mType == tileType) {
+				if(GetTile(aNewPos).mType == tileType) {
 					doMove = false;
 				}
 			}
 		}
 		if(doMove) {
-			SetTileType(aNewX, aNewY, GetTile(aOrigX, aOrigY).mType);
-			SetTileType(aOrigX, aOrigY, TileType.EMPTY);
+			SetTileType(aNewPos, GetTile(aOrigPos).mType);
+			SetTileType(aOrigPos, TileType.EMPTY);
 			return true;
 		}
 		return false;
 	}
 
-	public void SetTileType(int aX, int aY, TileType aTileType) {
-		GetTile(aX, aY).mType = aTileType;
+	public void SetTileType(Position aPos, TileType aTileType) {
+		GetTile(aPos).mType = aTileType;
 	}
 }

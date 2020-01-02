@@ -8,4 +8,9 @@ public class Position {
 		mX = aX;
 		mY = aY;
 	}
+
+	public Position(Position aPos) {
+		mX = aPos.mX;
+		mY = aPos.mY;
+	}
 }
