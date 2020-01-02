@@ -89,7 +89,7 @@ public class JFrameApplication extends JFrame implements Runnable {
 		while( true ) {
 			repaint();
 			try {
-				Thread.sleep(100);
+				Thread.sleep(35);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
