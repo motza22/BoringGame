@@ -8,20 +8,19 @@ public class MapTile {
 		INACCESSIBLE,
 		PLAYER,
 		ENEMY,
-		GOAL
+		GOAL,
+		HEATMAP,
 	}
 	public static final int sTileSize = 5;
 	public TileType mType;
-	public final int mX;
-	public final int mY;
+	public Position mPos;
 
-	MapTile(int x, int y, TileType type) {
+	MapTile(Position aPos, TileType type) {
 		mType = type;
-		mX = x;
-		mY = y;
+		mPos = aPos;
 	}
 
 	public Rectangle GetRectangle() {
-		return new Rectangle(mX * sTileSize, mY * sTileSize, sTileSize, sTileSize);
+		return new Rectangle(mPos.mX * sTileSize, mPos.mY * sTileSize, sTileSize, sTileSize);
 	}
 }

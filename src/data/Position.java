@@ -8,4 +8,13 @@ public class Position {
 		mX = aX;
 		mY = aY;
 	}
+
+	public Position(Position aPos) {
+		mX = aPos.mX;
+		mY = aPos.mY;
+	}
+
+	public boolean Compare(Position aPos) {
+		return mX == aPos.mX && mY == aPos.mY;
+	}
 }

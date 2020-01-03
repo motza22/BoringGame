@@ -10,7 +10,7 @@ import data.MapTile.TileType;
 import util.BoundaryRNG;
 
 public abstract class MapUtil {
-	private static final String sPath = "C:/Users/Zach/java_workspace/boring_game/save/aMap.csv";
+	private static final String sPath = "C:/Users/Zach/java_workspace/boring_game/save/map.csv";
 	private static final String sDelim = ",";
 
 	public static final Map GenerateNew(int aWidth, int aHeight) {
@@ -51,7 +51,7 @@ public abstract class MapUtil {
 				map = new Map(width, height);
 				for(int i=0; i<map.mWidth && count<data.length; i++) {
 					for(int j=0; j<map.mHeight && count<data.length; j++) {
-						map.GetTile(i, j).mType = TileType.values()[Integer.parseInt(data[count++])];
+						map.GetTile(new Position(i, j)).mType = TileType.values()[Integer.parseInt(data[count++])];
 					}
 				}
 			}
@@ -74,7 +74,7 @@ public abstract class MapUtil {
 			csvWriter.append(sDelim);
 			for(int i=0; i<aMap.mWidth; i++) {
 				for(int j=0; j<aMap.mHeight; j++) {
-					csvWriter.append(Integer.toString(aMap.GetTile(i, j).mType.ordinal()));
+					csvWriter.append(Integer.toString(aMap.GetTile(new Position(i, j)).mType.ordinal()));
 					csvWriter.append(sDelim);
 				}
 			}
@@ -91,34 +91,33 @@ public abstract class MapUtil {
 		boolean nodeCreated = false;
 
 		while(!nodeCreated) {
-			int nodeX = BoundaryRNG.Range(0, aMap.mWidth - 1);
-			int nodeY = BoundaryRNG.Range(0, aMap.mHeight - 1);
+			Position nodePos = new Position(BoundaryRNG.Range(0, aMap.mWidth - 1), BoundaryRNG.Range(0, aMap.mHeight - 1));
 
-			if(aMap.GetTile(nodeX, nodeY).mType == TileType.INACCESSIBLE)
+			if(aMap.GetTile(nodePos).mType == TileType.INACCESSIBLE)
 			{
 				int radius = BoundaryRNG.Range(5, 25);
-				Area nodeArea = new Area(nodeX, nodeY, radius);
+				Area nodeArea = new Area(nodePos.mX, nodePos.mY, radius);
 
 				nodeCreated = true;
-				aMap.GetTile(nodeX, nodeY).mType = aTileType;
+				aMap.GetTile(nodePos).mType = aTileType;
 
 				for(int i = nodeArea.mMinPos.mX; i <= nodeArea.mMaxPos.mX; i++) {
 					for(int j = nodeArea.mMinPos.mY; j <= nodeArea.mMaxPos.mY; j++) {
 						if(i == aMap.CheckWidth(i) && j == aMap.CheckHeight(j) && nodeArea.CheckCircle(i, j)) {
-							if(aMap.GetTile(i, j).mType == TileType.EMPTY) {
-							} else if(aMap.GetTile(i, j).mType == TileType.INACCESSIBLE) {
-								aMap.GetTile(i, j).mType = TileType.EMPTY;
+							if(aMap.GetTile(new Position(i, j)).mType == TileType.EMPTY) {
+							} else if(aMap.GetTile(new Position(i, j)).mType == TileType.INACCESSIBLE) {
+								aMap.GetTile(new Position(i, j)).mType = TileType.EMPTY;
 							}
 						}
 					}
 				}
 
 				if(aTileType == TileType.PLAYER || aTileType == TileType.GOAL) {
-					MakeTunnels(aMap, aMap.CheckWidth(BoundaryRNG.Range(nodeX - radius, nodeX + radius)),
-							aMap.CheckHeight(BoundaryRNG.Range(nodeY - radius, nodeY + radius)), 8, true);
+					MakeTunnels(aMap, aMap.CheckWidth(BoundaryRNG.Range(nodePos.mX - radius, nodePos.mX + radius)),
+							aMap.CheckHeight(BoundaryRNG.Range(nodePos.mY - radius, nodePos.mY + radius)), 8, true);
 				} else {
-					MakeTunnels(aMap, aMap.CheckWidth(BoundaryRNG.Range(nodeX - radius, nodeX + radius)),
-							aMap.CheckHeight(BoundaryRNG.Range(nodeY - radius, nodeY + radius)), 3, false);
+					MakeTunnels(aMap, aMap.CheckWidth(BoundaryRNG.Range(nodePos.mX - radius, nodePos.mX + radius)),
+							aMap.CheckHeight(BoundaryRNG.Range(nodePos.mY - radius, nodePos.mY + radius)), 3, false);
 				}
 			}
 		}
@@ -131,8 +130,8 @@ public abstract class MapUtil {
 				int lowerIdx = aMap.CheckWidth(BoundaryRNG.Range(aX - 100, aX));
 				int upperIdx = aMap.CheckWidth(BoundaryRNG.Range(aX, aX + 100));
 				for(int j = lowerIdx; j <= upperIdx; j++) {
-					if(aMap.GetTile(j, aY).mType == TileType.INACCESSIBLE) {
-						aMap.GetTile(j, aY).mType = TileType.EMPTY;
+					if(aMap.GetTile(new Position(j, aY)).mType == TileType.INACCESSIBLE) {
+						aMap.GetTile(new Position(j, aY)).mType = TileType.EMPTY;
 					}
 				}
 				if(recursive) {
@@ -144,8 +143,8 @@ public abstract class MapUtil {
 				int lowerIdx = aMap.CheckHeight(BoundaryRNG.Range(aY - 100, aY));
 				int upperIdx = aMap.CheckHeight(BoundaryRNG.Range(aY, aY + 100));
 				for(int j = lowerIdx; j <= upperIdx; j++) {
-					if(aMap.GetTile(aX, j).mType == TileType.INACCESSIBLE) {
-						aMap.GetTile(aX, j).mType = TileType.EMPTY;
+					if(aMap.GetTile(new Position(aX, j)).mType == TileType.INACCESSIBLE) {
+						aMap.GetTile(new Position(aX, j)).mType = TileType.EMPTY;
 					}
 				}
 				if(recursive) {
@@ -160,25 +159,24 @@ public abstract class MapUtil {
 		boolean clusterPlaced = false;
 
 		while(!clusterPlaced) {
-			int enemyX = BoundaryRNG.Range(0, aMap.mWidth - 1);
-			int enemyY = BoundaryRNG.Range(0, aMap.mHeight - 1);
+			Position enemyPos = new Position(BoundaryRNG.Range(0, aMap.mWidth - 1), BoundaryRNG.Range(0, aMap.mHeight - 1));
 
-			if(aMap.GetTile(enemyX, enemyY).mType == TileType.EMPTY)
+			if(aMap.GetTile(enemyPos).mType == TileType.EMPTY)
 			{
 				clusterPlaced = true;
-				aMap.GetTile(enemyX, enemyY).mType =  TileType.ENEMY;
+				aMap.GetTile(enemyPos).mType =  TileType.ENEMY;
 
 				int groupSize = (BoundaryRNG.Range(1, 20) > 15 ? BoundaryRNG.Range(1, 5) : 0);
 				int runCount = 0;
 
 				while(runCount++ < 8 && groupSize > 0)
 				{
-					enemyX = aMap.CheckWidth(enemyX + BoundaryRNG.Range(-1, 1));
-					enemyY = aMap.CheckHeight(enemyY + BoundaryRNG.Range(-1, 1));
+					enemyPos.mX = aMap.CheckWidth(enemyPos.mX + BoundaryRNG.Range(-1, 1));
+					enemyPos.mY = aMap.CheckHeight(enemyPos.mY + BoundaryRNG.Range(-1, 1));
 
-					if(aMap.GetTile(enemyX, enemyY).mType == TileType.EMPTY)
+					if(aMap.GetTile(enemyPos).mType == TileType.EMPTY)
 					{
-						aMap.GetTile(enemyX, enemyY).mType =  TileType.ENEMY;
+						aMap.GetTile(enemyPos).mType =  TileType.ENEMY;
 						groupSize--;
 						break;
 					}
