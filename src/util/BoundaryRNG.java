@@ -2,7 +2,7 @@ package util;
 
 import java.util.Random;
 
-public class BoundaryRNG {
+public abstract class BoundaryRNG {
 	private static Random sRandom = new Random();
 
 	public static int Upper(int aUpperLimit) {

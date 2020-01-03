@@ -20,7 +20,7 @@ import display.SimpleRectangle;
 public class MouseTest extends State implements MouseMotionListener, KeyListener {
 	private static JFrameApplication sJFrApp = null;
 	private Map mMap;
-	private Position mPlayerPos = new Position(-1, -1);
+	private Position mPlayerPos;
 	Vector<Move> mPath;
 
 	MouseTest() {
@@ -31,7 +31,7 @@ public class MouseTest extends State implements MouseMotionListener, KeyListener
 		}
 		mMap.Get().forEach((vector) -> vector.forEach((tile) -> {
 			if(tile.mType == TileType.PLAYER) {
-				mPlayerPos = tile.mPos;
+				mPlayerPos = new Position(tile.mPos);
 			}
 		}));
 		mPath = new Vector<Move>();
@@ -78,12 +78,12 @@ public class MouseTest extends State implements MouseMotionListener, KeyListener
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		while(!mPath.isEmpty()) {
+			mMap.SetTileType(mPath.firstElement().mNewPos, TileType.EMPTY);
+			mPath.remove(mPath.firstElement());
+		}
 		Vector<Move> moveList = PathFinder.Calculate(new Map(mMap), mPlayerPos, new Position(e.getX() / MapTile.sTileSize, e.getY() / MapTile.sTileSize));
 		if(moveList != null) {
-			while(!mPath.isEmpty()) {
-				mMap.SetTileType(mPath.firstElement().mNewPos, TileType.EMPTY);
-				mPath.remove(mPath.firstElement());
-			}
 			mPath = moveList;
 			for(int i=0; i<mPath.size(); i++) {
 				mMap.SetTileType(mPath.elementAt(i).mNewPos, TileType.HEATMAP);

@@ -13,7 +13,7 @@ public class MapTile {
 	}
 	public static final int sTileSize = 5;
 	public TileType mType;
-	public Position mPos;
+	public final Position mPos;
 
 	MapTile(Position aPos, TileType type) {
 		mType = type;

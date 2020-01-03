@@ -51,7 +51,7 @@ public abstract class MapUtil {
 				map = new Map(width, height);
 				for(int i=0; i<map.mWidth && count<data.length; i++) {
 					for(int j=0; j<map.mHeight && count<data.length; j++) {
-						map.GetTile(new Position(i, j)).mType = TileType.values()[Integer.parseInt(data[count++])];
+						map.SetTileType(new Position(i, j), TileType.values()[Integer.parseInt(data[count++])]);
 					}
 				}
 			}

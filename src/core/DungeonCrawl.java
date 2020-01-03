@@ -19,8 +19,8 @@ public class DungeonCrawl extends State implements KeyListener {
 	private static int sVisibleRadius = 32;
 	private static int sThreatRadius = 50;
 	private Map mMap;
-	private Position mPlayerPos = new Position(-1, -1);
-	private Position mGoalPos = new Position(-1, -1);
+	private Position mPlayerPos;
+	private Position mGoalPos;
 	private int mPlayerSpeed  = 1;
 
 	public DungeonCrawl() {
@@ -31,9 +31,9 @@ public class DungeonCrawl extends State implements KeyListener {
 		}
 		mMap.Get().forEach((vector) -> vector.forEach((tile) -> {
 			if(tile.mType == TileType.PLAYER) {
-				mPlayerPos = tile.mPos;
+				mPlayerPos = new Position(tile.mPos);
 			} else if(tile.mType == TileType.GOAL) {
-				mGoalPos = tile.mPos;
+				mGoalPos = new Position(tile.mPos);
 			}
 		}));
 	}

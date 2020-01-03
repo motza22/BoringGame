@@ -21,8 +21,8 @@ public class MazeSolver extends State implements MouseListener {
 	private static final Button sExitButton = new Button( 25,
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "Exit");
 	private Map mMap;
-	private Position mPlayerPos = new Position(-1, -1);
-	private Position mGoalPos = new Position(-1, -1);
+	private Position mPlayerPos;
+	private Position mGoalPos;
 	private Vector<Move> mMoveList = new Vector<Move>();
 
 	public MazeSolver() {
@@ -33,9 +33,9 @@ public class MazeSolver extends State implements MouseListener {
 		}
 		mMap.Get().forEach((vector) -> vector.forEach((tile) -> {
 			if(tile.mType == TileType.PLAYER) {
-				mPlayerPos = tile.mPos;
+				mPlayerPos = new Position(tile.mPos);
 			} else if(tile.mType == TileType.GOAL) {
-				mGoalPos = tile.mPos;
+				mGoalPos = new Position(tile.mPos);
 			}
 		}));
 		mMap.SetTileType(mPlayerPos, TileType.HEATMAP);
