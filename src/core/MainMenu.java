@@ -1,14 +1,17 @@
 package core;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 
 import display.Button;
 import display.JFrameApplication;
+import display.JString;
 
-public class MainMenu extends State implements MouseListener {
+public class MainMenu extends State implements MouseListener, KeyListener {
 	private static JFrameApplication sJFrApp = null;
 	private static final Button sPlayButton = new Button((JFrameApplication.WIDTH - Button.sWidth ) / 2,
 			(JFrameApplication.HEIGHT - Button.sHeight ) / 3, "Play");
@@ -16,6 +19,8 @@ public class MainMenu extends State implements MouseListener {
 			(JFrameApplication.HEIGHT - Button.sHeight ) / 2, "Map");
 	private static final Button sExitButton = new Button((JFrameApplication.WIDTH - Button.sWidth ) / 2,
 			((JFrameApplication.HEIGHT - Button.sHeight ) * 2) / 3, "Exit");
+	private static final JString sMouseTestTip = new JString(25, JFrameApplication.HEIGHT - 50, "X - Mouse Test");
+	private static final JString sMazeSolverTip = new JString(25, JFrameApplication.HEIGHT - 25, "Z - Maze Solver");
 
 	public MainMenu() {
 		sJFrApp = JFrameApplication.GetInstance();
@@ -23,6 +28,7 @@ public class MainMenu extends State implements MouseListener {
 
 	@Override
 	public void Close() {
+		sJFrApp.removeKeyListener(this);
 		sJFrApp.removeMouseListener(this);
 		sJFrApp.Clear();
 	}
@@ -30,6 +36,7 @@ public class MainMenu extends State implements MouseListener {
 	@Override
 	public void Initialize() {
 		sJFrApp.addMouseListener(this);
+		sJFrApp.addKeyListener(this);
 	}
 
 	@Override
@@ -40,6 +47,8 @@ public class MainMenu extends State implements MouseListener {
 		sJFrApp.AddSprite(sPlayButton);
 		sJFrApp.AddSprite(sMapButton);
 		sJFrApp.AddSprite(sExitButton);
+		sJFrApp.AddSprite(sMouseTestTip);
+		sJFrApp.AddSprite(sMazeSolverTip);
 		sJFrApp.mSpriteLock.unlock();
 	}
 
@@ -73,5 +82,25 @@ public class MainMenu extends State implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		switch(e.getKeyCode()) {
+		case KeyEvent.VK_X:
+			Game.GetInstance().Push(new MouseTest());
+			break;
+		case KeyEvent.VK_Z:
+			Game.GetInstance().Push(new MazeSolver());
+			break;
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
 	}
 }

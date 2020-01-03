@@ -16,10 +16,8 @@ public class ViewMap extends State implements MouseListener {
 	private static JFrameApplication sJFrApp = null;
 	private static final Button sNewButton = new Button(JFrameApplication.WIDTH - Button.sWidth - 25,
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "New");
-	private static final Button sPlayButton = new Button( (JFrameApplication.WIDTH / 2) + 75,
+	private static final Button sPlayButton = new Button( (JFrameApplication.WIDTH - Button.sWidth ) / 2,
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "Play");
-	private static final Button sSolveButton = new Button( (JFrameApplication.WIDTH / 2) - Button.sWidth - 75,
-			JFrameApplication.HEIGHT - Button.sHeight - 25, "Solve");
 	private static final Button sExitButton = new Button( 25,
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "Exit");
 	private Map mMap;
@@ -59,7 +57,6 @@ public class ViewMap extends State implements MouseListener {
 		ShowMap();
 		sJFrApp.AddSprite(sNewButton);
 		sJFrApp.AddSprite(sPlayButton);
-		sJFrApp.AddSprite(sSolveButton);
 		sJFrApp.AddSprite(sExitButton);
 		sJFrApp.mSpriteLock.unlock();
 	}
@@ -75,8 +72,6 @@ public class ViewMap extends State implements MouseListener {
 			Show();
 		} else if(sPlayButton.CheckBounds(e.getX(), e.getY())) {
 			Game.GetInstance().PopPush(1, new DungeonCrawl());
-		} else if(sSolveButton.CheckBounds(e.getX(), e.getY())) {
-			Game.GetInstance().Push(new MazeSolver());
 		} else if(sExitButton.CheckBounds(e.getX(), e.getY())) {
 			Game.GetInstance().Pop(1);
 		}

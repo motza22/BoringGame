@@ -12,7 +12,7 @@ public abstract class PathFinder {
 		Node baseNode = new Node(aMap, aStartPos, aGoalPos);
 		Node finalNode = ProcessNodes(baseNode);
 
-		return finalNode.GetMoveList();
+		return finalNode != null ? finalNode.GetMoveList() : null;
 	}
 
 	private static final Node ProcessNodes(Node aNode) {
@@ -20,7 +20,7 @@ public abstract class PathFinder {
 		Vector<Node> nodes = new Vector<Node>();
 		nodes.add(aNode);
 
-		while(!nodes.firstElement().IsAtGoal() && ticks++ < 100000) {
+		while(!nodes.isEmpty() && !nodes.firstElement().IsAtGoal() && ticks++ < 100000) {
 			Node baseNode = nodes.firstElement();
 			nodes.remove(nodes.firstElement());
 			for (PathDirection direction : PathDirection.values()) {
@@ -39,6 +39,6 @@ public abstract class PathFinder {
 			}
 		}
 
-		return nodes.firstElement();
+		return !nodes.isEmpty() ? nodes.firstElement() : null;
 	}
 }

@@ -56,7 +56,7 @@ public class Node {
 			newPos.mX = mMap.CheckWidth(newPos.mX + 1);
 		}
 
-		if(mMap.MoveTile(mPos, newPos, TileType.INACCESSIBLE, TileType.HEATMAP)) {
+		if(mMap.MoveTile(mPos, newPos, TileType.INACCESSIBLE, TileType.ENEMY, TileType.HEATMAP)) {
 			mMap.SetTileType(mPos, TileType.HEATMAP);
 			mMoves.add(new Move(mPos, newPos));
 			mPos = newPos;

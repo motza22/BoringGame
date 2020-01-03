@@ -6,11 +6,11 @@ import java.awt.Graphics;
 public class Button extends SimpleRectangle {
 	public static final int sWidth = 250;
 	public static final int sHeight = 75;
-	private String mString;
+	private JString mJString;
 
 	public Button(int aX, int aY, String aString) {
 		super(aX, aY, sWidth, sHeight, Color.BLACK);
-		mString = aString;
+		mJString = new JString(aX, aY, aString);
 	}
 
 	public boolean CheckBounds(int aX, int aY) {
@@ -23,6 +23,6 @@ public class Button extends SimpleRectangle {
 	@Override
 	public void Draw(Graphics aGraphics) {
 		super.Draw(aGraphics);
-		aGraphics.drawString(mString, mRectangle.x, mRectangle.y);
+		mJString.Draw(aGraphics);
 	}
 }
