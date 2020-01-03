@@ -9,9 +9,7 @@ import data.Position;
 
 public abstract class PathFinder {
 	public static final Vector<Move> Calculate(Map aMap, Position aStartPos, Position aGoalPos) {
-		Node baseNode = new Node(aMap, aStartPos, aGoalPos);
-		Node finalNode = ProcessNodes(baseNode);
-
+		Node finalNode = ProcessNodes(new Node(aMap, aStartPos, aGoalPos));
 		return finalNode != null ? finalNode.GetMoveList() : null;
 	}
 
@@ -19,7 +17,6 @@ public abstract class PathFinder {
 		int ticks = 0;
 		Vector<Node> nodes = new Vector<Node>();
 		nodes.add(aNode);
-
 		while(!nodes.isEmpty() && !nodes.firstElement().IsAtGoal() && ticks++ < 100000) {
 			Node baseNode = nodes.firstElement();
 			nodes.remove(nodes.firstElement());
@@ -28,17 +25,20 @@ public abstract class PathFinder {
 				if(!newNode.GetPosition().Compare(baseNode.GetPosition())) {
 					if(nodes.isEmpty()) {
 						nodes.add(newNode);
-					}
-					for(int i=0; i<nodes.size(); i++) {
-						if(newNode.GetTotalCost() <= nodes.elementAt(i).GetTotalCost() || i == nodes.size()-1) {
-							nodes.add(newNode);
-							break;
+					} else {
+						for(int i=0; i<nodes.size(); i++) {
+							if(newNode.GetTotalCost() < nodes.elementAt(i).GetTotalCost()) {
+								nodes.add(i, newNode);
+								break;
+							} else if(i == nodes.size()-1) {
+								nodes.add(newNode);
+								break;
+							}
 						}
 					}
 				}
 			}
 		}
-
 		return !nodes.isEmpty() ? nodes.firstElement() : null;
 	}
 }
