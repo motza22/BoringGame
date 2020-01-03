@@ -10,6 +10,7 @@ public class MapTile {
 		ENEMY,
 		GOAL,
 		HEATMAP,
+		HEATMAP_HOT
 	}
 	public static final int sTileSize = 5;
 	public TileType mType;

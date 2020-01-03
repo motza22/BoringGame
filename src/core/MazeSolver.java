@@ -5,6 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Vector;
 
+import ai.Node;
 import ai.PathFinder;
 import data.Map;
 import data.MapTile;
@@ -23,7 +24,7 @@ public class MazeSolver extends State implements MouseListener {
 	private Map mMap;
 	private Position mPlayerPos;
 	private Position mGoalPos;
-	private Vector<Move> mMoveList = new Vector<Move>();
+	private Vector<Node> mNodes = new Vector<Node>();
 
 	public MazeSolver() {
 		sJFrApp = JFrameApplication.GetInstance();
@@ -39,7 +40,8 @@ public class MazeSolver extends State implements MouseListener {
 			}
 		}));
 		mMap.SetTileType(mPlayerPos, TileType.HEATMAP);
-		mMoveList = PathFinder.Calculate(new Map(mMap), mPlayerPos, mGoalPos);
+		mNodes = new Vector<Node>();
+		mNodes.add(new Node(mMap, mPlayerPos, mGoalPos));
 	}
 
 	private void ShowMap() {
@@ -73,9 +75,14 @@ public class MazeSolver extends State implements MouseListener {
 
 	@Override
 	public void Update() {
-		if(!mMoveList.isEmpty()) {
-			mMap.SetTileType(mMoveList.firstElement().mNewPos, TileType.HEATMAP);
-			mMoveList.remove(mMoveList.firstElement());
+		if(!mNodes.isEmpty()) {
+			Node node = PathFinder.ProcessNodes(mNodes, 10);
+			if(node.IsAtGoal()) {
+				Vector<Move> moves = node.GetMoveList();
+				for(int i=0; i<moves.size(); i++) {
+					mMap.SetTileType(moves.elementAt(i).mNewPos, TileType.HEATMAP_HOT);
+				}
+			}
 			Show();
 		}
 	}
