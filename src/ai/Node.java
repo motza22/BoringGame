@@ -16,11 +16,11 @@ public class Node {
 	}
 
 	private Map mMap;
-	private Position mPos;
+	private final Position mPos;
 	private final Position mTargetPos;
-	private int mCost;
-	private int mCostToGoal;
-	private Vector<Move> mMoves;
+	private final int mCost;
+	private final int mCostToGoal;
+	private final Vector<Move> mMoves;
 
 	public static final int CalcManhattanDist(Position aPos, Position aTargetPos) {
 		return Math.abs(aTargetPos.mX - aPos.mX) + Math.abs(aTargetPos.mY - aPos.mY);
@@ -38,14 +38,9 @@ public class Node {
 	@SuppressWarnings("unchecked")
 	public Node(Node aNode, PathDirection aDirection) {
 		mMap = aNode.mMap;
-		mPos = aNode.mPos;
-		mTargetPos = aNode.mTargetPos;
-		mCost = aNode.mCost;
-		mCostToGoal = aNode.mCostToGoal;
-		mMoves = (Vector<Move>)aNode.mMoves.clone();
+		mTargetPos = new Position(aNode.mTargetPos);
 
-		Position newPos = new Position(mPos.mX, mPos.mY);
-
+		Position newPos = new Position(aNode.mPos);
 		if(aDirection == PathDirection.BOW) {
 			newPos.mY = mMap.CheckHeight(newPos.mY - 1);
 		} else if(aDirection == PathDirection.STERN) {
@@ -56,25 +51,33 @@ public class Node {
 			newPos.mX = mMap.CheckWidth(newPos.mX + 1);
 		}
 
-		if(mMap.MoveTile(mPos, newPos, TileType.INACCESSIBLE, TileType.ENEMY, TileType.HEATMAP)) {
-			mMap.SetTileType(mPos, TileType.HEATMAP);
-			mMoves.add(new Move(mPos, newPos));
+		if(mMap.MoveTile(aNode.mPos, newPos, TileType.INACCESSIBLE, TileType.ENEMY, TileType.HEATMAP)) {
 			mPos = newPos;
-			mCost++;
+			mCost = aNode.mCost + 1;
 			mCostToGoal = CalcManhattanDist(mPos, mTargetPos);
+			mMoves = (Vector<Move>)aNode.mMoves.clone();
+			mMoves.add(new Move(aNode.mPos, mPos));
+			mMap.SetTileType(aNode.mPos, TileType.HEATMAP);
+		} else {
+			mPos = aNode.mPos;
+			mCost = aNode.mCost;
+			mCostToGoal = aNode.mCostToGoal;
+			mMoves = (Vector<Move>)aNode.mMoves.clone();
 		}
 	}
 
-	public final Vector<Move> GetMoveList() {
-		return mMoves;
+	@SuppressWarnings("unchecked")
+	public Vector<Move> GetMoveList() {
+		return (Vector<Move>)mMoves.clone();
 	}
 
-	public final Position GetPosition() {
-		return mPos;
+	public Position GetPosition() {
+		return new Position(mPos);
 	}
 
 	public int GetTotalCost() {
-		return mCost + mCostToGoal;
+		//		return mCost + mCostToGoal;
+		return mCostToGoal;
 	}
 
 	public boolean IsAtGoal() {

@@ -27,7 +27,7 @@ public abstract class PathFinder {
 						aNodes.add(newNode);
 					} else {
 						for(int i=0; i<aNodes.size(); i++) {
-							if(newNode.GetTotalCost() < aNodes.elementAt(i).GetTotalCost()) {
+							if(newNode.GetTotalCost() <= aNodes.elementAt(i).GetTotalCost()) {
 								aNodes.add(i, newNode);
 								break;
 							} else if(i == aNodes.size()-1) {
