@@ -23,7 +23,7 @@ public abstract class TileColor {
 			color = Color.YELLOW;
 		} else if(mType == TileType.HEATMAP) {
 			color = Color.GREEN;
-		} else if(mType == TileType.HEATMAP_HOT) {
+		} else if(mType == TileType.PATH) {
 			color = Color.ORANGE;
 		}
 		return color;

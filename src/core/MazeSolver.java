@@ -25,7 +25,7 @@ public class MazeSolver extends State implements MouseListener {
 	private Position mPlayerPos;
 	private Position mGoalPos;
 	private Vector<Node> mNodes = new Vector<Node>();
-	Vector<Move> mPath;
+	private Vector<Move> mPath;
 
 	public MazeSolver() {
 		sJFrApp = JFrameApplication.GetInstance();
@@ -82,10 +82,11 @@ public class MazeSolver extends State implements MouseListener {
 			mPath.remove(mPath.firstElement());
 		}
 		if(!mNodes.isEmpty()) {
+			PathFinder.ProcessNodes(mNodes, 3);
 			Node node = PathFinder.ProcessNodes(mNodes, 3);
 			mPath = node.GetMoveList();
 			for(int i=0; i<mPath.size(); i++) {
-				mMap.SetTileType(mPath.elementAt(i).mNewPos, TileType.HEATMAP_HOT);
+				mMap.SetTileType(mPath.elementAt(i).mNewPos, TileType.PATH);
 			}
 			Show();
 		}
