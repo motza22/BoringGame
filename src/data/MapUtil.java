@@ -57,7 +57,7 @@ public abstract class MapUtil {
 			}
 			csvReader.close();
 		} catch (FileNotFoundException e) {
-			// do nothing
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -81,7 +81,7 @@ public abstract class MapUtil {
 			csvWriter.flush();
 			csvWriter.close();
 		} catch (FileNotFoundException e) {
-			// do nothing
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -77,6 +77,7 @@ public class Node {
 
 	public int GetTotalCost() {
 		//		return mCost + mCostToGoal;
+		//		return mCost + 2 * mCostToGoal;
 		return mCostToGoal;
 	}
 
