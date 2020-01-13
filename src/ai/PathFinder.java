@@ -2,9 +2,9 @@ package ai;
 
 import java.util.Vector;
 
-import ai.Node.PathDirection;
 import data.Map;
 import data.Move;
+import data.Move.Direction;
 import data.Position;
 
 public abstract class PathFinder {
@@ -20,7 +20,7 @@ public abstract class PathFinder {
 		while(!aNodes.isEmpty() && !aNodes.firstElement().IsAtGoal() && ticks++ < aTickLimit) {
 			Node baseNode = aNodes.firstElement();
 			aNodes.remove(aNodes.firstElement());
-			for (PathDirection direction : PathDirection.values()) {
+			for (Direction direction : Direction.values()) {
 				Node newNode = new Node(baseNode, direction);
 				if(!newNode.GetPosition().Compare(baseNode.GetPosition())) {
 					if(aNodes.isEmpty()) {

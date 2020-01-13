@@ -5,16 +5,10 @@ import java.util.Vector;
 import data.Map;
 import data.MapTile.TileType;
 import data.Move;
+import data.Move.Direction;
 import data.Position;
 
 public class Node {
-	public enum PathDirection {
-		BOW,
-		STERN,
-		PORT,
-		STARBOARD
-	}
-
 	private Map mMap;
 	private final Position mPos;
 	private final Position mTargetPos;
@@ -36,18 +30,18 @@ public class Node {
 	}
 
 	@SuppressWarnings("unchecked")
-	public Node(Node aNode, PathDirection aDirection) {
+	public Node(Node aNode, Direction aDirection) {
 		mMap = aNode.mMap;
 		mTargetPos = new Position(aNode.mTargetPos);
 
 		Position newPos = new Position(aNode.mPos);
-		if(aDirection == PathDirection.BOW) {
+		if(aDirection == Direction.BOW) {
 			newPos.mY = mMap.CheckHeight(newPos.mY - 1);
-		} else if(aDirection == PathDirection.STERN) {
+		} else if(aDirection == Direction.STERN) {
 			newPos.mY = mMap.CheckHeight(newPos.mY + 1);
-		} else if(aDirection == PathDirection.PORT) {
+		} else if(aDirection == Direction.PORT) {
 			newPos.mX = mMap.CheckWidth(newPos.mX - 1);
-		} else if(aDirection == PathDirection.STARBOARD) {
+		} else if(aDirection == Direction.STARBOARD) {
 			newPos.mX = mMap.CheckWidth(newPos.mX + 1);
 		}
 

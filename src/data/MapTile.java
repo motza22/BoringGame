@@ -9,6 +9,7 @@ public class MapTile {
 		PLAYER,
 		ENEMY,
 		GOAL,
+		BULLET,
 		HEATMAP,
 		PATH
 	}

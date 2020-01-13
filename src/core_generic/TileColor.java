@@ -1,4 +1,4 @@
-package core;
+package core_generic;
 
 import java.awt.Color;
 
@@ -21,6 +21,8 @@ public abstract class TileColor {
 			color = Color.RED;
 		} else if(mType == TileType.GOAL) {
 			color = Color.YELLOW;
+		} else if(mType == TileType.BULLET) {
+			color = Color.GREEN;
 		} else if(mType == TileType.HEATMAP) {
 			color = Color.GREEN;
 		} else if(mType == TileType.PATH) {

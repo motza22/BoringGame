@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import core_generic.TileColor;
 import data.Map;
 import data.MapTile;
 import data.MapTile.TileType;
