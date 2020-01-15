@@ -40,7 +40,6 @@ public class MazeSolver extends State implements MouseListener {
 				mGoalPos = new Position(tile.mPos);
 			}
 		}));
-		mMap.SetTileType(mPlayerPos, TileType.HEATMAP);
 		mNodes = new Vector<Node>();
 		mNodes.add(new Node(mMap, mPlayerPos, mGoalPos));
 		mRun = true;
@@ -78,7 +77,10 @@ public class MazeSolver extends State implements MouseListener {
 	@Override
 	public void Update() {
 		if(!mNodes.isEmpty() && mRun) {
-			Node node = PathFinder.ProcessNodes(mNodes, 3);
+			Node node = PathFinder.ProcessNodes(mNodes, 1);
+			for(int i=0; i<mNodes.size(); i++) {
+				mMap.SetTileType(mNodes.elementAt(i).GetPosition(), TileType.HEATMAP);
+			}
 			if(node.IsAtGoal()) {
 				for(int i=0; i<node.GetMoveList().size(); i++) {
 					mMap.SetTileType(node.GetMoveList().elementAt(i).mNewPos, TileType.PATH);
@@ -87,7 +89,6 @@ public class MazeSolver extends State implements MouseListener {
 			}
 			Show();
 		}
-
 	}
 
 	@Override
