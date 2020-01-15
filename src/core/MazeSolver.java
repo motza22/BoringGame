@@ -7,7 +7,7 @@ import java.util.Vector;
 
 import ai.Node;
 import ai.PathFinder;
-import core_generic.TileColor;
+import core_basic.TileColor;
 import data.Map;
 import data.MapTile;
 import data.MapTile.TileType;

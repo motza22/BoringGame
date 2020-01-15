@@ -1,4 +1,4 @@
-package core_generic;
+package core_basic;
 
 import java.util.Vector;
 
@@ -17,9 +17,15 @@ public class Enemy extends NativeObject {
 		mMoves.clear();
 		Vector<Node> nodes = new Vector<Node>();
 		nodes.add(new Node(aMap, mPos, aPosition));
-		PathFinder.ProcessNodes(nodes, 100).GetMoveList().forEach((move) -> {
-			AddMove(new Move(move));
-		});
+		Node node = PathFinder.ProcessNodes(nodes, 10);
+		if(node != null) {
+			Vector<Move> moves = node.GetMoveList();
+			if(!moves.isEmpty()) {
+				moves.forEach((move) -> {
+					AddMove(new Move(move));
+				});
+			}
+		}
 	}
 
 	@Override

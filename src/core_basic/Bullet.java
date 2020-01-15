@@ -1,4 +1,4 @@
-package core_generic;
+package core_basic;
 
 import data.Map;
 import data.MapTile.TileType;

@@ -1,4 +1,4 @@
-package core_generic;
+package core_basic;
 
 import java.awt.Color;
 

@@ -82,11 +82,23 @@ public class Map {
 		return playerFound && goalFound;
 	}
 
+	public boolean TryMoveTile(Position aOrigPos, Position aNewPos) {
+		return MoveTile(aOrigPos, aNewPos, true, TileType.INACCESSIBLE);
+	}
+
+	public boolean TryMoveTile(Position aOrigPos, Position aNewPos, TileType ...aInvalidTiles) {
+		return MoveTile(aOrigPos, aNewPos, true, aInvalidTiles);
+	}
+
 	public boolean MoveTile(Position aOrigPos, Position aNewPos) {
-		return MoveTile(aOrigPos, aNewPos, TileType.INACCESSIBLE);
+		return MoveTile(aOrigPos, aNewPos, false, TileType.INACCESSIBLE);
 	}
 
 	public boolean MoveTile(Position aOrigPos, Position aNewPos, TileType ...aInvalidTiles) {
+		return MoveTile(aOrigPos, aNewPos, false, aInvalidTiles);
+	}
+
+	public boolean MoveTile(Position aOrigPos, Position aNewPos, boolean aReadOnly, TileType ...aInvalidTiles) {
 		boolean doMove = false;
 		if(!aOrigPos.Compare(aNewPos)) {
 			doMove = true;
@@ -96,12 +108,11 @@ public class Map {
 				}
 			}
 		}
-		if(doMove) {
+		if(doMove && !aReadOnly) {
 			SetTileType(aNewPos, GetTile(aOrigPos).mType);
 			SetTileType(aOrigPos, TileType.EMPTY);
-			return true;
 		}
-		return false;
+		return doMove;
 	}
 
 	public void SetTileType(Position aPos, TileType aTileType) {

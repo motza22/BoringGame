@@ -8,7 +8,7 @@ import java.awt.event.MouseMotionListener;
 import java.util.Vector;
 
 import ai.PathFinder;
-import core_generic.TileColor;
+import core_basic.TileColor;
 import data.Map;
 import data.MapTile;
 import data.MapTile.TileType;

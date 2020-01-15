@@ -6,9 +6,9 @@ import java.awt.event.KeyListener;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
-import core_generic.Bullet;
-import core_generic.Enemy;
-import core_generic.TileColor;
+import core_basic.Bullet;
+import core_basic.Enemy;
+import core_basic.TileColor;
 import data.Area;
 import data.Map;
 import data.MapTile;
@@ -71,27 +71,40 @@ public class DungeonCrawl extends State implements KeyListener {
 	}
 
 	private void MoveEnemies() {
-		//		Area threatArea = new Area(mPlayerPos.mX, mPlayerPos.mY, sThreatRadius);
-		//		for(int i = threatArea.mMinPos.mX; i <= threatArea.mMaxPos.mX; i++) {
-		//			for(int j = threatArea.mMinPos.mY; j <= threatArea.mMaxPos.mY; j++) {
-		//				if(i == mMap.CheckWidth(i) && j == mMap.CheckHeight(j) && threatArea.CheckCircle(i, j)) {
-		//					if(mMap.GetTile(new Position(i, j)).mType == TileType.ENEMY) {
-		//						int newX = mMap.CheckWidth(BoundaryRNG.Range(i-1, i+1));
-		//						int newY = mMap.CheckHeight(BoundaryRNG.Range(j-1, j+1));
-		//						if(mMap.MoveTile(new Position(i, j), new Position(newX, newY), TileType.INACCESSIBLE, TileType.GOAL, TileType.ENEMY)) {
-		//							if(mPlayerPos.mX == newX && mPlayerPos.mY == newY) {
-		//								EndGame();
-		//							}
-		//						}
-		//					}
-		//				}
-		//			}
-		//		}
 		mMapLock.lock();
+		Area threatArea = new Area(mPlayerPos.mX, mPlayerPos.mY, sThreatRadius);
+		for(int i = threatArea.mMinPos.mX; i <= threatArea.mMaxPos.mX; i++) {
+			for(int j = threatArea.mMinPos.mY; j <= threatArea.mMaxPos.mY; j++) {
+				if(i == mMap.CheckWidth(i) && j == mMap.CheckHeight(j) && threatArea.CheckCircle(i, j)) {
+					Position pos = new Position(i, j);
+					if(mMap.GetTile(pos).mType == TileType.ENEMY) {
+						TryAddEnemy(pos);
+					}
+				}
+			}
+		}
 		mEnemies.forEach(enemy -> {
 			enemy.UpdateTarget(mMap, mPlayerPos);
 			enemy.ExecuteMove(mMap);
 		});
+		mMapLock.unlock();
+	}
+
+	private void TryAddEnemy(Position aPos) {
+		mMapLock.lock();
+		if(mEnemies.isEmpty()) {
+			mEnemies.add(new Enemy(aPos));
+		} else {
+			boolean found = false;
+			for(int i=0; i<mEnemies.size(); i++) {
+				if(mEnemies.elementAt(i).GetPosition().Compare(aPos)) {
+					found = true;
+				}
+			}
+			if(!found) {
+				mEnemies.add(new Enemy(aPos));
+			}
+		}
 		mMapLock.unlock();
 	}
 
@@ -194,7 +207,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		case KeyEvent.VK_UP:
 			mMapLock.lock();
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY - mPlayerSpeed);
-			if(newPos.mY != mPlayerPos.mY && mMap.GetTile(newPos).mType != TileType.INACCESSIBLE && mMap.GetTile(newPos).mType != TileType.BULLET) {
+			if(mMap.TryMoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
 				mMap.SetTileType(newPos, TileType.BULLET);
 				mBullets.add(new Bullet(newPos, Direction.BOW));
 			}
@@ -204,7 +217,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		case KeyEvent.VK_DOWN:
 			mMapLock.lock();
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY + mPlayerSpeed);
-			if(newPos.mY != mPlayerPos.mY && mMap.GetTile(newPos).mType != TileType.INACCESSIBLE && mMap.GetTile(newPos).mType != TileType.BULLET) {
+			if(mMap.TryMoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
 				mMap.SetTileType(newPos, TileType.BULLET);
 				mBullets.add(new Bullet(newPos, Direction.STERN));
 			}
@@ -214,7 +227,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		case KeyEvent.VK_LEFT:
 			mMapLock.lock();
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX - mPlayerSpeed);
-			if(newPos.mX != mPlayerPos.mX && mMap.GetTile(newPos).mType != TileType.INACCESSIBLE && mMap.GetTile(newPos).mType != TileType.BULLET) {
+			if(mMap.TryMoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
 				mMap.SetTileType(newPos, TileType.BULLET);
 				mBullets.add(new Bullet(newPos, Direction.PORT));
 			}
@@ -224,7 +237,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		case KeyEvent.VK_RIGHT:
 			mMapLock.lock();
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX + mPlayerSpeed);
-			if(newPos.mX != mPlayerPos.mX && mMap.GetTile(newPos).mType != TileType.INACCESSIBLE && mMap.GetTile(newPos).mType != TileType.BULLET) {
+			if(mMap.TryMoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
 				mMap.SetTileType(newPos, TileType.BULLET);
 				mBullets.add(new Bullet(newPos, Direction.STARBOARD));
 			}

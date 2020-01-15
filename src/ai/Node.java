@@ -45,13 +45,14 @@ public class Node {
 			newPos.mX = mMap.CheckWidth(newPos.mX + 1);
 		}
 
-		if(mMap.MoveTile(aNode.mPos, newPos, TileType.INACCESSIBLE, TileType.ENEMY, TileType.HEATMAP)) {
+		//		if(mMap.MoveTile(aNode.mPos, newPos, TileType.INACCESSIBLE, TileType.ENEMY, TileType.HEATMAP)) {
+		if(mMap.TryMoveTile(aNode.mPos, newPos, TileType.INACCESSIBLE, TileType.ENEMY, TileType.HEATMAP)) {
 			mPos = newPos;
 			mCost = aNode.mCost + 1;
 			mCostToGoal = CalcManhattanDist(mPos, mTargetPos);
 			mMoves = (Vector<Move>)aNode.mMoves.clone();
 			mMoves.add(new Move(aNode.mPos, mPos));
-			mMap.SetTileType(aNode.mPos, TileType.HEATMAP);
+			//			mMap.SetTileType(aNode.mPos, TileType.HEATMAP);
 		} else {
 			mPos = aNode.mPos;
 			mCost = aNode.mCost;
