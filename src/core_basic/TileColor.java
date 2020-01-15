@@ -5,10 +5,6 @@ import java.awt.Color;
 import data.MapTile.TileType;
 
 public abstract class TileColor {
-	public static final TileType GetTile(Color aColor) {
-		return TileType.INACCESSIBLE;
-	}
-
 	public static final Color GetColor(TileType mType) {
 		Color color = Color.BLACK;
 		if(mType == TileType.INACCESSIBLE) {

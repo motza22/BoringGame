@@ -33,8 +33,8 @@ public class Bullet extends NativeObject {
 			newPos.mX = aMap.CheckWidth(newPos.mX + 1);
 		}
 		if(!mPos.Compare(newPos) &&
-				aMap.GetTile(newPos).mType != TileType.INACCESSIBLE &&
-				aMap.GetTile(newPos).mType != TileType.GOAL) {
+				aMap.GetTileType(newPos) != TileType.INACCESSIBLE &&
+				aMap.GetTileType(newPos) != TileType.GOAL) {
 			AddMove(new Move(mPos, newPos));
 			mPos = newPos;
 			mIsMoving = true;

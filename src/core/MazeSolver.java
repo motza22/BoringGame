@@ -33,7 +33,7 @@ public class MazeSolver extends State implements MouseListener {
 		if(mMap == null || !mMap.IsSane() || !mMap.IsPlayable()) {
 			mMap = MapUtil.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
 		}
-		mMap.Get().forEach((vector) -> vector.forEach((tile) -> {
+		mMap.Get().forEach(vector -> vector.forEach(tile -> {
 			if(tile.mType == TileType.PLAYER) {
 				mPlayerPos = new Position(tile.mPos);
 			} else if(tile.mType == TileType.GOAL) {
@@ -47,7 +47,7 @@ public class MazeSolver extends State implements MouseListener {
 	}
 
 	private void ShowMap() {
-		mMap.Get().forEach((vector) -> vector.forEach((tile) -> {
+		mMap.Get().forEach(vector -> vector.forEach(tile -> {
 			if(tile.mType != TileType.INACCESSIBLE) {
 				sJFrApp.AddSprite(new SimpleRectangle(tile.GetRectangle(), TileColor.GetColor(tile.mType)));
 			}

@@ -17,8 +17,12 @@ public class MapTile {
 	public TileType mType;
 	public final Position mPos;
 
-	MapTile(Position aPos, TileType type) {
-		mType = type;
+	MapTile(int aX, int aY, TileType aType) {
+		this(new Position(aX, aY), aType);
+	}
+
+	MapTile(Position aPos, TileType aType) {
+		mType = aType;
 		mPos = aPos;
 	}
 

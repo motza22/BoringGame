@@ -21,7 +21,7 @@ public class Enemy extends NativeObject {
 		if(node != null) {
 			Vector<Move> moves = node.GetMoveList();
 			if(!moves.isEmpty()) {
-				moves.forEach((move) -> {
+				moves.forEach(move -> {
 					AddMove(new Move(move));
 				});
 			}

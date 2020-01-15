@@ -38,7 +38,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		if(mMap == null || !mMap.IsSane() || !mMap.IsPlayable()) {
 			mMap = MapUtil.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
 		}
-		mMap.Get().forEach((vector) -> vector.forEach((tile) -> {
+		mMap.Get().forEach(vector -> vector.forEach(tile -> {
 			if(tile.mType == TileType.PLAYER) {
 				mPlayerPos = new Position(tile.mPos);
 			} else if(tile.mType == TileType.GOAL) {
@@ -47,6 +47,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		}));
 		mBullets = new Vector<Bullet>();
 		mEnemies = new Vector<Enemy>();
+		FindEnemies();
 		mMapLock.unlock();
 	}
 
@@ -72,17 +73,6 @@ public class DungeonCrawl extends State implements KeyListener {
 
 	private void MoveEnemies() {
 		mMapLock.lock();
-		Area threatArea = new Area(mPlayerPos.mX, mPlayerPos.mY, sThreatRadius);
-		for(int i = threatArea.mMinPos.mX; i <= threatArea.mMaxPos.mX; i++) {
-			for(int j = threatArea.mMinPos.mY; j <= threatArea.mMaxPos.mY; j++) {
-				if(i == mMap.CheckWidth(i) && j == mMap.CheckHeight(j) && threatArea.CheckCircle(i, j)) {
-					Position pos = new Position(i, j);
-					if(mMap.GetTile(pos).mType == TileType.ENEMY) {
-						TryAddEnemy(pos);
-					}
-				}
-			}
-		}
 		mEnemies.forEach(enemy -> {
 			enemy.UpdateTarget(mMap, mPlayerPos);
 			enemy.ExecuteMove(mMap);
@@ -90,19 +80,29 @@ public class DungeonCrawl extends State implements KeyListener {
 		mMapLock.unlock();
 	}
 
-	private void TryAddEnemy(Position aPos) {
+	private void FindEnemies() {
 		mMapLock.lock();
-		if(mEnemies.isEmpty()) {
-			mEnemies.add(new Enemy(aPos));
-		} else {
-			boolean found = false;
-			for(int i=0; i<mEnemies.size(); i++) {
-				if(mEnemies.elementAt(i).GetPosition().Compare(aPos)) {
-					found = true;
+		Area threatArea = new Area(mPlayerPos.mX, mPlayerPos.mY, sThreatRadius);
+		for(int i = threatArea.mMinPos.mX; i <= threatArea.mMaxPos.mX; i++) {
+			for(int j = threatArea.mMinPos.mY; j <= threatArea.mMaxPos.mY; j++) {
+				if(threatArea.CheckCircle(i, j) && i == mMap.CheckWidth(i) && j == mMap.CheckHeight(j)) {
+					Position pos = new Position(i, j);
+					if(mMap.GetTileType(pos) == TileType.ENEMY) {
+						if(mEnemies.isEmpty()) {
+							mEnemies.add(new Enemy(pos));
+						} else {
+							boolean found = false;
+							for(int k=0; k<mEnemies.size(); k++) {
+								if(mEnemies.elementAt(k).GetPosition().Compare(pos)) {
+									found = true;
+								}
+							}
+							if(!found) {
+								mEnemies.add(new Enemy(pos));
+							}
+						}
+					}
 				}
-			}
-			if(!found) {
-				mEnemies.add(new Enemy(aPos));
 			}
 		}
 		mMapLock.unlock();
@@ -113,7 +113,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		if(mPlayerPos.mX == mGoalPos.mX && mPlayerPos.mY == mGoalPos.mY) {
 			EndGame();
 		} else {
-			mMap.Get().forEach((vector) -> vector.forEach((tile) -> {
+			mMap.Get().forEach(vector -> vector.forEach(tile -> {
 				if(tile.mType == TileType.PLAYER) {
 					Show();
 					return;
@@ -128,7 +128,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		Area visibleArea = new Area(mPlayerPos.mX, mPlayerPos.mY, sVisibleRadius);
 		for(int i = visibleArea.mMinPos.mX; i <= visibleArea.mMaxPos.mX; i++) {
 			for(int j = visibleArea.mMinPos.mY; j <= visibleArea.mMaxPos.mY; j++) {
-				if(i == mMap.CheckWidth(i) && j == mMap.CheckHeight(j) && visibleArea.CheckCircle(i, j)) {
+				if(visibleArea.CheckCircle(i, j) && i == mMap.CheckWidth(i) && j == mMap.CheckHeight(j)) {
 					MapTile tile = mMap.GetTile(new Position(i, j));
 					sJFrApp.AddSprite(new SimpleRectangle(tile.GetRectangle(), TileColor.GetColor(tile.mType)));
 				}
@@ -173,6 +173,7 @@ public class DungeonCrawl extends State implements KeyListener {
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY - mPlayerSpeed);
 			if(mMap.MoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
 				mPlayerPos.mY = newPos.mY;
+				FindEnemies();
 			}
 			mMapLock.unlock();
 			break;
@@ -182,6 +183,7 @@ public class DungeonCrawl extends State implements KeyListener {
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY + mPlayerSpeed);
 			if(mMap.MoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
 				mPlayerPos.mY = newPos.mY;
+				FindEnemies();
 			}
 			mMapLock.unlock();
 			break;
@@ -191,6 +193,7 @@ public class DungeonCrawl extends State implements KeyListener {
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX - mPlayerSpeed);
 			if(mMap.MoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
 				mPlayerPos.mX = newPos.mX;
+				FindEnemies();
 			}
 			mMapLock.unlock();
 			break;
@@ -200,6 +203,7 @@ public class DungeonCrawl extends State implements KeyListener {
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX + mPlayerSpeed);
 			if(mMap.MoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
 				mPlayerPos.mX = newPos.mX;
+				FindEnemies();
 			}
 			mMapLock.unlock();
 			break;

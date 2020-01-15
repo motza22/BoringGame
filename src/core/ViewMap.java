@@ -32,7 +32,7 @@ public class ViewMap extends State implements MouseListener {
 	}
 
 	private void ShowMap() {
-		mMap.Get().forEach((vector) -> vector.forEach((tile) -> {
+		mMap.Get().forEach(vector -> vector.forEach(tile -> {
 			if(tile.mType != TileType.INACCESSIBLE) {
 				sJFrApp.AddSprite(new SimpleRectangle(tile.GetRectangle(), TileColor.GetColor(tile.mType)));
 			}

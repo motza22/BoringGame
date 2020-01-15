@@ -51,7 +51,7 @@ public abstract class MapUtil {
 				map = new Map(width, height);
 				for(int i=0; i<map.mWidth && count<data.length; i++) {
 					for(int j=0; j<map.mHeight && count<data.length; j++) {
-						map.SetTileType(new Position(i, j), TileType.values()[Integer.parseInt(data[count++])]);
+						map.SetTileType(i, j, TileType.values()[Integer.parseInt(data[count++])]);
 					}
 				}
 			}
@@ -74,7 +74,7 @@ public abstract class MapUtil {
 			csvWriter.append(sDelim);
 			for(int i=0; i<aMap.mWidth; i++) {
 				for(int j=0; j<aMap.mHeight; j++) {
-					csvWriter.append(Integer.toString(aMap.GetTile(new Position(i, j)).mType.ordinal()));
+					csvWriter.append(Integer.toString(aMap.GetTileType(i, j).ordinal()));
 					csvWriter.append(sDelim);
 				}
 			}
@@ -93,20 +93,20 @@ public abstract class MapUtil {
 		while(!nodeCreated) {
 			Position nodePos = new Position(BoundaryRNG.Range(0, aMap.mWidth - 1), BoundaryRNG.Range(0, aMap.mHeight - 1));
 
-			if(aMap.GetTile(nodePos).mType == TileType.INACCESSIBLE)
+			if(aMap.GetTileType(nodePos) == TileType.INACCESSIBLE)
 			{
 				int radius = BoundaryRNG.Range(5, 25);
 				Area nodeArea = new Area(nodePos.mX, nodePos.mY, radius);
 
 				nodeCreated = true;
-				aMap.GetTile(nodePos).mType = aTileType;
+				aMap.SetTileType(nodePos, aTileType);
 
 				for(int i = nodeArea.mMinPos.mX; i <= nodeArea.mMaxPos.mX; i++) {
 					for(int j = nodeArea.mMinPos.mY; j <= nodeArea.mMaxPos.mY; j++) {
-						if(i == aMap.CheckWidth(i) && j == aMap.CheckHeight(j) && nodeArea.CheckCircle(i, j)) {
-							if(aMap.GetTile(new Position(i, j)).mType == TileType.EMPTY) {
-							} else if(aMap.GetTile(new Position(i, j)).mType == TileType.INACCESSIBLE) {
-								aMap.GetTile(new Position(i, j)).mType = TileType.EMPTY;
+						if(nodeArea.CheckCircle(i, j) && i == aMap.CheckWidth(i) && j == aMap.CheckHeight(j)) {
+							if(aMap.GetTileType(i, j) == TileType.EMPTY) {
+							} else if(aMap.GetTileType(i, j) == TileType.INACCESSIBLE) {
+								aMap.SetTileType(i, j, TileType.EMPTY);
 							}
 						}
 					}
@@ -130,8 +130,8 @@ public abstract class MapUtil {
 				int lowerIdx = aMap.CheckWidth(BoundaryRNG.Range(aX - 100, aX));
 				int upperIdx = aMap.CheckWidth(BoundaryRNG.Range(aX, aX + 100));
 				for(int j = lowerIdx; j <= upperIdx; j++) {
-					if(aMap.GetTile(new Position(j, aY)).mType == TileType.INACCESSIBLE) {
-						aMap.GetTile(new Position(j, aY)).mType = TileType.EMPTY;
+					if(aMap.GetTileType(j, aY) == TileType.INACCESSIBLE) {
+						aMap.SetTileType(j, aY, TileType.EMPTY);
 					}
 				}
 				if(recursive) {
@@ -143,8 +143,8 @@ public abstract class MapUtil {
 				int lowerIdx = aMap.CheckHeight(BoundaryRNG.Range(aY - 100, aY));
 				int upperIdx = aMap.CheckHeight(BoundaryRNG.Range(aY, aY + 100));
 				for(int j = lowerIdx; j <= upperIdx; j++) {
-					if(aMap.GetTile(new Position(aX, j)).mType == TileType.INACCESSIBLE) {
-						aMap.GetTile(new Position(aX, j)).mType = TileType.EMPTY;
+					if(aMap.GetTileType(aX, j) == TileType.INACCESSIBLE) {
+						aMap.SetTileType(aX, j, TileType.EMPTY);
 					}
 				}
 				if(recursive) {
@@ -161,10 +161,10 @@ public abstract class MapUtil {
 		while(!clusterPlaced) {
 			Position enemyPos = new Position(BoundaryRNG.Range(0, aMap.mWidth - 1), BoundaryRNG.Range(0, aMap.mHeight - 1));
 
-			if(aMap.GetTile(enemyPos).mType == TileType.EMPTY)
+			if(aMap.GetTileType(enemyPos) == TileType.EMPTY)
 			{
 				clusterPlaced = true;
-				aMap.GetTile(enemyPos).mType =  TileType.ENEMY;
+				aMap.SetTileType(enemyPos, TileType.ENEMY);
 
 				int groupSize = (BoundaryRNG.Range(1, 20) > 15 ? BoundaryRNG.Range(1, 5) : 0);
 				int runCount = 0;
@@ -174,9 +174,9 @@ public abstract class MapUtil {
 					enemyPos.mX = aMap.CheckWidth(enemyPos.mX + BoundaryRNG.Range(-1, 1));
 					enemyPos.mY = aMap.CheckHeight(enemyPos.mY + BoundaryRNG.Range(-1, 1));
 
-					if(aMap.GetTile(enemyPos).mType == TileType.EMPTY)
+					if(aMap.GetTileType(enemyPos) == TileType.EMPTY)
 					{
-						aMap.GetTile(enemyPos).mType =  TileType.ENEMY;
+						aMap.SetTileType(enemyPos, TileType.ENEMY);
 						groupSize--;
 						break;
 					}
