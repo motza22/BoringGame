@@ -5,12 +5,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import core_assets.TileColor;
+import data.GameStats;
 import data.Map;
 import data.MapTile;
 import data.MapTile.TileType;
 import data.MapUtil;
 import display.Button;
 import display.JFrameApplication;
+import display.JString;
 import display.SimpleRectangle;
 
 public class ViewMap extends State implements MouseListener {
@@ -21,7 +23,10 @@ public class ViewMap extends State implements MouseListener {
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "Play");
 	private static final Button sExitButton = new Button( 25,
 			JFrameApplication.HEIGHT - Button.sHeight - 25, "Exit");
+	private static JString sBulletsFired = new JString(25, JFrameApplication.HEIGHT - 150, "");
+	private static JString sEnemiesKilled = new JString(25, JFrameApplication.HEIGHT - 125, "");
 	private Map mMap;
+	private GameStats mStats;
 
 	public ViewMap() {
 		sJFrApp = JFrameApplication.GetInstance();
@@ -29,6 +34,8 @@ public class ViewMap extends State implements MouseListener {
 		if(mMap == null) {
 			mMap = MapUtil.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
 		}
+		mStats = new GameStats();
+		mStats.Load();
 	}
 
 	private void ShowMap() {
@@ -37,6 +44,13 @@ public class ViewMap extends State implements MouseListener {
 				sJFrApp.AddSprite(new SimpleRectangle(tile.GetRectangle(), TileColor.GetColor(tile.mType)));
 			}
 		}));
+	}
+
+	private void ShowStats() {
+		sBulletsFired.SetText("Bullets Fired: " + mStats.mBulletsFired + ".");
+		sJFrApp.AddSprite(sBulletsFired);
+		sEnemiesKilled.SetText("Enemies Killed: " + mStats.mEnemiesKilled + ".");
+		sJFrApp.AddSprite(sEnemiesKilled);
 	}
 
 	@Override
@@ -56,6 +70,7 @@ public class ViewMap extends State implements MouseListener {
 		sJFrApp.mSpriteLock.lock();
 		sJFrApp.Clear();
 		ShowMap();
+		ShowStats();
 		sJFrApp.AddSprite(sNewButton);
 		sJFrApp.AddSprite(sPlayButton);
 		sJFrApp.AddSprite(sExitButton);

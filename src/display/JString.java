@@ -1,5 +1,6 @@
 package display;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 public class JString extends Sprite {
@@ -13,8 +14,13 @@ public class JString extends Sprite {
 		mY = aY;
 	}
 
+	public void SetText(String aString) {
+		mString = aString;
+	}
+
 	@Override
 	public void Draw(Graphics aGraphics) {
+		aGraphics.setColor(Color.BLACK);
 		aGraphics.drawString(mString, mX, mY);
 	}
 }

@@ -10,6 +10,7 @@ import core_assets.Bullet;
 import core_assets.Enemy;
 import core_assets.TileColor;
 import data.Area;
+import data.GameStats;
 import data.Map;
 import data.MapTile;
 import data.MapTile.TileType;
@@ -31,6 +32,7 @@ public class DungeonCrawl extends State implements KeyListener {
 	private Vector<Bullet> mBullets;
 	private Vector<Enemy> mEnemies;
 	private boolean mMoveEnemies;
+	private GameStats mStats;
 
 	public DungeonCrawl() {
 		mMapLock.lock();
@@ -48,6 +50,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		}));
 		mBullets = new Vector<Bullet>();
 		mEnemies = new Vector<Enemy>();
+		mStats = new GameStats();
 		FindEnemies();
 		mMoveEnemies = true;
 		mMapLock.unlock();
@@ -57,6 +60,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		mMapLock.lock();
 		MapUtil.Save(mMap);
 		mMapLock.unlock();
+		mStats.Save();
 		Game.GetInstance().PopPush(1, new ViewMap());
 	}
 
@@ -77,6 +81,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		if(mMap.TryMoveTile(mPlayerPos, aPos, TileType.INACCESSIBLE, TileType.BULLET, TileType.GOAL)) {
 			mMap.SetTileType(aPos, TileType.BULLET);
 			mBullets.add(new Bullet(aPos, aDir));
+			mStats.mBulletsFired++;
 		}
 		mMapLock.unlock();
 	}
@@ -92,6 +97,7 @@ public class DungeonCrawl extends State implements KeyListener {
 			} else {
 				mMap.SetTileType(mBullets.elementAt(i).GetPosition(), TileType.EMPTY);
 				mBullets.remove(i);
+				mStats.mEnemiesKilled++;
 			}
 		}
 		mMapLock.unlock();
