@@ -1,17 +1,12 @@
 package data;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.Vector;
 
 import data.MapTile.TileType;
 import util.BoundaryRNG;
 
 public abstract class MapUtil {
 	private static final String sPath = "C:/Users/Zach/java_workspace/boring_game/save/map.csv";
-	private static final String sDelim = ",";
 
 	public static final Map GenerateNew(int aWidth, int aHeight) {
 		Map map = new Map(aWidth, aHeight);
@@ -59,54 +54,41 @@ public abstract class MapUtil {
 		return map;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static final Map LoadSave() {
 		Map map = null;
+		Vector data = FileReadWrite.Load(sPath);
+		if(!data.isEmpty()) {
+			int width = (int)data.firstElement();
+			data.remove(data.firstElement());
+			int height = (int)data.firstElement();
+			data.remove(data.firstElement());
+			map = new Map(width, height);
 
-		try {
-			BufferedReader csvReader = new BufferedReader(new FileReader(sPath));
-			String row;
-			while ((row = csvReader.readLine()) != null) {
-				String[] data = row.split(sDelim);
-				int count = 0;
-				int width = Integer.parseInt(data[count++]);
-				int height = Integer.parseInt(data[count++]);
-				map = new Map(width, height);
-				for(int i=0; i<map.mWidth && count<data.length; i++) {
-					for(int j=0; j<map.mHeight && count<data.length; j++) {
-						map.SetTileType(i, j, TileType.values()[Integer.parseInt(data[count++])]);
+			int count = 0;
+			for(int i=0; i<map.mWidth; i++) {
+				for(int j=0; j<map.mHeight; j++) {
+					map.SetTileType(i, j, TileType.values()[(int) data.elementAt(count++)]);
+					if(count >= data.size()) {
+						return map;
 					}
 				}
 			}
-			csvReader.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-
 		return map;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static final void Save(Map aMap) {
-		try {
-			FileWriter csvWriter = new FileWriter(sPath);
-			csvWriter.append(Integer.toString(aMap.mWidth));
-			csvWriter.append(sDelim);
-			csvWriter.append(Integer.toString(aMap.mHeight));
-			csvWriter.append(sDelim);
-			for(int i=0; i<aMap.mWidth; i++) {
-				for(int j=0; j<aMap.mHeight; j++) {
-					csvWriter.append(Integer.toString(aMap.GetTileType(i, j).ordinal()));
-					csvWriter.append(sDelim);
-				}
+		Vector data = new Vector();
+		data.add(aMap.mWidth);
+		data.add(aMap.mHeight);
+		for(int i=0; i<aMap.mWidth; i++) {
+			for(int j=0; j<aMap.mHeight; j++) {
+				data.add(aMap.GetTileType(i, j).ordinal());
 			}
-			csvWriter.flush();
-			csvWriter.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
+		FileReadWrite.Save(sPath, data);
 	}
 
 	private static final void CreatePlayableNode(Map aMap, TileType aTileType) {
