@@ -1,4 +1,4 @@
-package core_basic;
+package core_assets;
 
 import java.awt.Color;
 

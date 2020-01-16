@@ -22,8 +22,8 @@ public class Node {
 
 	public Node(Map aMap, Position aPos, Position aTargetPos) {
 		mMap = aMap;
-		mPos = aPos;
-		mTargetPos = aTargetPos;
+		mPos = new Position(aPos);
+		mTargetPos = new Position(aTargetPos);
 		mCost = 0;
 		mCostToGoal = CalcManhattanDist(mPos, mTargetPos);
 		mMoves = new Vector<Move>();
@@ -45,19 +45,20 @@ public class Node {
 			newPos.mX = mMap.CheckWidth(newPos.mX + 1);
 		}
 
-		//		if(mMap.MoveTile(aNode.mPos, newPos, TileType.INACCESSIBLE, TileType.ENEMY, TileType.HEATMAP)) {
-		if(mMap.TryMoveTile(aNode.mPos, newPos, TileType.INACCESSIBLE, TileType.ENEMY, TileType.HEATMAP)) {
+		if( mMap.TryMoveTile(aNode.mPos, newPos, TileType.INACCESSIBLE, TileType.HEATMAP) &&
+				(newPos.Compare(mTargetPos) || mMap.TryMoveTile(aNode.mPos, newPos, TileType.ENEMY, TileType.PLAYER, TileType.GOAL, TileType.BULLET))) {
+			mMap.MoveTile(aNode.mPos, newPos, TileType.INACCESSIBLE, TileType.HEATMAP);
 			mPos = newPos;
 			mCost = aNode.mCost + 1;
 			mCostToGoal = CalcManhattanDist(mPos, mTargetPos);
 			mMoves = (Vector<Move>)aNode.mMoves.clone();
 			mMoves.add(new Move(aNode.mPos, mPos));
-			//			mMap.SetTileType(aNode.mPos, TileType.HEATMAP);
+			mMap.SetTileType(aNode.mPos, TileType.HEATMAP);
 		} else {
 			mPos = aNode.mPos;
 			mCost = aNode.mCost;
 			mCostToGoal = aNode.mCostToGoal;
-			mMoves = (Vector<Move>)aNode.mMoves.clone();
+			mMoves = aNode.mMoves;
 		}
 	}
 
@@ -71,8 +72,6 @@ public class Node {
 	}
 
 	public int GetTotalCost() {
-		//		return mCost + mCostToGoal;
-		//		return mCost + 2 * mCostToGoal;
 		return mCostToGoal;
 	}
 

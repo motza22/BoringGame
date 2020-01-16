@@ -17,7 +17,7 @@ public abstract class MapUtil {
 		Map map = new Map(aWidth, aHeight);
 
 		int nodeLimit = (int)(((Math.sqrt(map.mWidth * map.mHeight) / 20) * BoundaryRNG.Range(2, 4)) + BoundaryRNG.Range(4, 6));
-		int enemyLimit = (int)((Math.sqrt(map.mWidth * map.mHeight) / 10) * BoundaryRNG.Range(15, 25));
+		int enemyLimit = (int)((Math.sqrt(map.mWidth * map.mHeight) / 10) * BoundaryRNG.Range(8, 16));
 
 		for(int i = 0; i < nodeLimit; i++) {
 			if(i==0) {
@@ -32,6 +32,28 @@ public abstract class MapUtil {
 		for(int i = 0; i < enemyLimit; i++) {
 			PlaceEnemyCluster(map);
 		}
+
+		for(int i=0; i<map.Get().size(); i++) {
+			for(int j=0; j<map.Get().elementAt(i).size(); j++) {
+				if(map.GetTileType(i, j) == TileType.PLAYER) {
+					Position pos = new Position(i, j);
+					for(int k=map.CheckWidth(pos.mX-10); k<=map.CheckWidth(pos.mX+10); k++) {
+						for(int l=map.CheckHeight(pos.mY-10); l<=map.CheckHeight(pos.mY+10); l++) {
+							if(map.GetTileType(k, l) == TileType.ENEMY) {
+								map.SetTileType(k, l, TileType.EMPTY);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		map.Get().forEach(vector -> vector.forEach(tile -> {
+			if(tile.mType == TileType.PLAYER) {
+
+				return;
+			}
+		}));
 
 		Save(map);
 		return map;
@@ -166,7 +188,7 @@ public abstract class MapUtil {
 				clusterPlaced = true;
 				aMap.SetTileType(enemyPos, TileType.ENEMY);
 
-				int groupSize = (BoundaryRNG.Range(1, 20) > 15 ? BoundaryRNG.Range(1, 5) : 0);
+				int groupSize = (BoundaryRNG.Range(1, 20) > 15 ? BoundaryRNG.Range(1, 4) : 0);
 				int runCount = 0;
 
 				while(runCount++ < 8 && groupSize > 0)

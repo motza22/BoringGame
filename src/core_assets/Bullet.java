@@ -1,4 +1,4 @@
-package core_basic;
+package core_assets;
 
 import data.Map;
 import data.MapTile.TileType;
@@ -20,21 +20,25 @@ public class Bullet extends NativeObject {
 		return mIsMoving;
 	}
 
+	public Position GetNextPosition(final Map aMap) {
+		Position nextPos = new Position(mPos);
+		if(mDirection == Direction.BOW) {
+			nextPos.mY = aMap.CheckHeight(nextPos.mY - 1);
+		} else if(mDirection == Direction.STERN) {
+			nextPos.mY = aMap.CheckHeight(nextPos.mY + 1);
+		} else if(mDirection == Direction.PORT) {
+			nextPos.mX = aMap.CheckWidth(nextPos.mX - 1);
+		} else if(mDirection == Direction.STARBOARD) {
+			nextPos.mX = aMap.CheckWidth(nextPos.mX + 1);
+		}
+		return nextPos;
+	}
+
 	@Override
 	public void ExecuteMove(Map aMap) {
-		Position newPos = new Position(mPos);
-		if(mDirection == Direction.BOW) {
-			newPos.mY = aMap.CheckHeight(newPos.mY - 1);
-		} else if(mDirection == Direction.STERN) {
-			newPos.mY = aMap.CheckHeight(newPos.mY + 1);
-		} else if(mDirection == Direction.PORT) {
-			newPos.mX = aMap.CheckWidth(newPos.mX - 1);
-		} else if(mDirection == Direction.STARBOARD) {
-			newPos.mX = aMap.CheckWidth(newPos.mX + 1);
-		}
+		Position newPos = GetNextPosition(aMap);
 		if(!mPos.Compare(newPos) &&
-				aMap.GetTileType(newPos) != TileType.INACCESSIBLE &&
-				aMap.GetTileType(newPos) != TileType.GOAL) {
+				aMap.TryMoveTile(mPos, newPos, TileType.INACCESSIBLE, TileType.GOAL)) {
 			AddMove(new Move(mPos, newPos));
 			mPos = newPos;
 			mIsMoving = true;
@@ -43,4 +47,5 @@ public class Bullet extends NativeObject {
 			mIsMoving = false;
 		}
 	}
+
 }

@@ -6,9 +6,9 @@ import java.awt.event.KeyListener;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
-import core_basic.Bullet;
-import core_basic.Enemy;
-import core_basic.TileColor;
+import core_assets.Bullet;
+import core_assets.Enemy;
+import core_assets.TileColor;
 import data.Area;
 import data.Map;
 import data.MapTile;
@@ -20,6 +20,7 @@ import display.JFrameApplication;
 import display.SimpleRectangle;
 
 public class DungeonCrawl extends State implements KeyListener {
+	public final ReentrantLock mMapLock = new ReentrantLock();
 	private static JFrameApplication sJFrApp = null;
 	private static int sVisibleRadius = 32;
 	private static int sThreatRadius = 50;
@@ -29,7 +30,7 @@ public class DungeonCrawl extends State implements KeyListener {
 	private int mPlayerSpeed = 1;
 	private Vector<Bullet> mBullets;
 	private Vector<Enemy> mEnemies;
-	public final ReentrantLock mMapLock = new ReentrantLock();
+	private boolean mMoveEnemies;
 
 	public DungeonCrawl() {
 		mMapLock.lock();
@@ -48,6 +49,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		mBullets = new Vector<Bullet>();
 		mEnemies = new Vector<Enemy>();
 		FindEnemies();
+		mMoveEnemies = true;
 		mMapLock.unlock();
 	}
 
@@ -58,10 +60,34 @@ public class DungeonCrawl extends State implements KeyListener {
 		Game.GetInstance().PopPush(1, new ViewMap());
 	}
 
+	private void MovePlayer(Position aPos) {
+		mMapLock.lock();
+		if(mMap.MoveTile(mPlayerPos, aPos, TileType.INACCESSIBLE, TileType.BULLET)) {
+			mPlayerPos = new Position(aPos);
+			FindEnemies();
+		}
+		mMapLock.unlock();
+	}
+
+	private void AddBullet(Position aPos, Direction aDir) {
+		mMapLock.lock();
+		if(mMap.GetTileType(aPos) == TileType.ENEMY) {
+			RemoveEnemyAtPosition(aPos);
+		}
+		if(mMap.TryMoveTile(mPlayerPos, aPos, TileType.INACCESSIBLE, TileType.BULLET, TileType.GOAL)) {
+			mMap.SetTileType(aPos, TileType.BULLET);
+			mBullets.add(new Bullet(aPos, aDir));
+		}
+		mMapLock.unlock();
+	}
+
 	private void MoveBullets() {
 		mMapLock.lock();
 		for(int i=mBullets.size()-1; i>=0; i--) {
 			if(mBullets.elementAt(i).IsMoving()) {
+				if(mMap.GetTileType(mBullets.elementAt(i).GetNextPosition(mMap)) == TileType.ENEMY) {
+					RemoveEnemyAtPosition(mBullets.elementAt(i).GetNextPosition(mMap));
+				}
 				mBullets.elementAt(i).ExecuteMove(mMap);
 			} else {
 				mMap.SetTileType(mBullets.elementAt(i).GetPosition(), TileType.EMPTY);
@@ -73,10 +99,19 @@ public class DungeonCrawl extends State implements KeyListener {
 
 	private void MoveEnemies() {
 		mMapLock.lock();
-		mEnemies.forEach(enemy -> {
-			enemy.UpdateTarget(mMap, mPlayerPos);
-			enemy.ExecuteMove(mMap);
-		});
+		boolean isPlayerAlive = true;
+		for(int i=0; i<mEnemies.size(); i++) {
+			mEnemies.elementAt(i).UpdateTarget(mPlayerPos);
+			mEnemies.elementAt(i).ExecuteMove();
+			if(mEnemies.elementAt(i).GetPosition().Compare(mPlayerPos)) {
+				isPlayerAlive = false;
+				EndGame();
+				break;
+			}
+		}
+		if(isPlayerAlive) {
+			mMap.SetTileType(mPlayerPos, TileType.PLAYER);
+		}
 		mMapLock.unlock();
 	}
 
@@ -89,7 +124,7 @@ public class DungeonCrawl extends State implements KeyListener {
 					Position pos = new Position(i, j);
 					if(mMap.GetTileType(pos) == TileType.ENEMY) {
 						if(mEnemies.isEmpty()) {
-							mEnemies.add(new Enemy(pos));
+							mEnemies.add(new Enemy(pos, mMap));
 						} else {
 							boolean found = false;
 							for(int k=0; k<mEnemies.size(); k++) {
@@ -98,7 +133,7 @@ public class DungeonCrawl extends State implements KeyListener {
 								}
 							}
 							if(!found) {
-								mEnemies.add(new Enemy(pos));
+								mEnemies.add(new Enemy(pos, mMap));
 							}
 						}
 					}
@@ -121,6 +156,15 @@ public class DungeonCrawl extends State implements KeyListener {
 			}));
 		}
 		mMapLock.unlock();
+	}
+
+	private void RemoveEnemyAtPosition(Position aPos) {
+		for(int i=0; i<mEnemies.size(); i++) {
+			if(mEnemies.elementAt(i).GetPosition().Compare(aPos)) {
+				mEnemies.remove(i);
+				break;
+			}
+		}
 	}
 
 	private void ShowVisibleArea() {
@@ -160,7 +204,12 @@ public class DungeonCrawl extends State implements KeyListener {
 	@Override
 	public void Update() {
 		MoveBullets();
-		MoveEnemies();
+		if(mMoveEnemies) {
+			MoveEnemies();
+			mMoveEnemies = false;
+		} else {
+			mMoveEnemies = true;
+		}
 		FinishTurn();
 	}
 
@@ -169,83 +218,43 @@ public class DungeonCrawl extends State implements KeyListener {
 		Position newPos = new Position(mPlayerPos.mX, mPlayerPos.mY);
 		switch(e.getKeyCode()) {
 		case KeyEvent.VK_W:
-			mMapLock.lock();
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY - mPlayerSpeed);
-			if(mMap.MoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
-				mPlayerPos.mY = newPos.mY;
-				FindEnemies();
-			}
-			mMapLock.unlock();
+			MovePlayer(newPos);
 			break;
 
 		case KeyEvent.VK_S:
-			mMapLock.lock();
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY + mPlayerSpeed);
-			if(mMap.MoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
-				mPlayerPos.mY = newPos.mY;
-				FindEnemies();
-			}
-			mMapLock.unlock();
+			MovePlayer(newPos);
 			break;
 
 		case KeyEvent.VK_A:
-			mMapLock.lock();
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX - mPlayerSpeed);
-			if(mMap.MoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
-				mPlayerPos.mX = newPos.mX;
-				FindEnemies();
-			}
-			mMapLock.unlock();
+			MovePlayer(newPos);
 			break;
 
 		case KeyEvent.VK_D:
-			mMapLock.lock();
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX + mPlayerSpeed);
-			if(mMap.MoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
-				mPlayerPos.mX = newPos.mX;
-				FindEnemies();
-			}
-			mMapLock.unlock();
+			MovePlayer(newPos);
 			break;
 
 		case KeyEvent.VK_UP:
-			mMapLock.lock();
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY - mPlayerSpeed);
-			if(mMap.TryMoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
-				mMap.SetTileType(newPos, TileType.BULLET);
-				mBullets.add(new Bullet(newPos, Direction.BOW));
-			}
-			mMapLock.unlock();
+			AddBullet(newPos, Direction.BOW);
 			break;
 
 		case KeyEvent.VK_DOWN:
-			mMapLock.lock();
 			newPos.mY = mMap.CheckHeight(mPlayerPos.mY + mPlayerSpeed);
-			if(mMap.TryMoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
-				mMap.SetTileType(newPos, TileType.BULLET);
-				mBullets.add(new Bullet(newPos, Direction.STERN));
-			}
-			mMapLock.unlock();
+			AddBullet(newPos, Direction.STERN);
 			break;
 
 		case KeyEvent.VK_LEFT:
-			mMapLock.lock();
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX - mPlayerSpeed);
-			if(mMap.TryMoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
-				mMap.SetTileType(newPos, TileType.BULLET);
-				mBullets.add(new Bullet(newPos, Direction.PORT));
-			}
-			mMapLock.unlock();
+			AddBullet(newPos, Direction.PORT);
 			break;
 
 		case KeyEvent.VK_RIGHT:
-			mMapLock.lock();
 			newPos.mX = mMap.CheckWidth(mPlayerPos.mX + mPlayerSpeed);
-			if(mMap.TryMoveTile(mPlayerPos, newPos, TileType.INACCESSIBLE, TileType.BULLET)) {
-				mMap.SetTileType(newPos, TileType.BULLET);
-				mBullets.add(new Bullet(newPos, Direction.STARBOARD));
-			}
-			mMapLock.unlock();
+			AddBullet(newPos, Direction.STARBOARD);
 			break;
 
 		case KeyEvent.VK_K:
