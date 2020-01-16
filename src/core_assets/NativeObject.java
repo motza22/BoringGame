@@ -25,6 +25,9 @@ public abstract class NativeObject {
 
 	public void ExecuteMove(Map aMap) {
 		if(!mMoves.isEmpty()) {
+			if(!mMoves.isEmpty()) {
+				mPos = new Position(mMoves.firstElement().mNewPos);
+			}
 			aMap.MoveTile(mMoves.firstElement().mOrigPos, mMoves.firstElement().mNewPos);
 			mMoves.remove(mMoves.firstElement());
 		}

@@ -42,9 +42,6 @@ public class Enemy extends NativeObject {
 	}
 
 	public void ExecuteMove() {
-		if(!mMoves.isEmpty()) {
-			mPos = new Position(mMoves.firstElement().mNewPos);
-		}
 		super.ExecuteMove(mMap);
 	}
 }
