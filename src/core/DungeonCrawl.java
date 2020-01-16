@@ -38,8 +38,11 @@ public class DungeonCrawl extends State implements KeyListener {
 		mMapLock.lock();
 		sJFrApp = JFrameApplication.GetInstance();
 		mMap = MapUtil.LoadSave();
+		mStats = new GameStats();
 		if(mMap == null || !mMap.IsSane() || !mMap.IsPlayable()) {
 			mMap = MapUtil.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
+		} else {
+			mStats.Load();
 		}
 		mMap.Get().forEach(vector -> vector.forEach(tile -> {
 			if(tile.mType == TileType.PLAYER) {
@@ -50,7 +53,6 @@ public class DungeonCrawl extends State implements KeyListener {
 		}));
 		mBullets = new Vector<Bullet>();
 		mEnemies = new Vector<Enemy>();
-		mStats = new GameStats();
 		FindEnemies();
 		mMoveEnemies = true;
 		mMapLock.unlock();
@@ -89,15 +91,16 @@ public class DungeonCrawl extends State implements KeyListener {
 	private void MoveBullets() {
 		mMapLock.lock();
 		for(int i=mBullets.size()-1; i>=0; i--) {
-			if(mBullets.elementAt(i).IsMoving()) {
+			if(!mMap.TryMoveTile(mBullets.elementAt(i).GetPosition(), mBullets.elementAt(i).GetNextPosition(mMap),
+					TileType.INACCESSIBLE, TileType.GOAL,TileType.ENEMY)) {
 				if(mMap.GetTileType(mBullets.elementAt(i).GetNextPosition(mMap)) == TileType.ENEMY) {
 					RemoveEnemyAtPosition(mBullets.elementAt(i).GetNextPosition(mMap));
+					mMap.SetTileType(mBullets.elementAt(i).GetNextPosition(mMap), TileType.EMPTY);
 				}
-				mBullets.elementAt(i).ExecuteMove(mMap);
-			} else {
 				mMap.SetTileType(mBullets.elementAt(i).GetPosition(), TileType.EMPTY);
 				mBullets.remove(i);
-				mStats.mEnemiesKilled++;
+			} else {
+				mBullets.elementAt(i).ExecuteMove(mMap);
 			}
 		}
 		mMapLock.unlock();
@@ -168,6 +171,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		for(int i=0; i<mEnemies.size(); i++) {
 			if(mEnemies.elementAt(i).GetPosition().Compare(aPos)) {
 				mEnemies.remove(i);
+				mStats.mEnemiesKilled++;
 				break;
 			}
 		}

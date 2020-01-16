@@ -32,8 +32,8 @@ public abstract class MapUtil {
 			for(int j=0; j<map.Get().elementAt(i).size(); j++) {
 				if(map.GetTileType(i, j) == TileType.PLAYER) {
 					Position pos = new Position(i, j);
-					for(int k=map.CheckWidth(pos.mX-10); k<=map.CheckWidth(pos.mX+10); k++) {
-						for(int l=map.CheckHeight(pos.mY-10); l<=map.CheckHeight(pos.mY+10); l++) {
+					for(int k=map.CheckWidth(pos.mX-18); k<=map.CheckWidth(pos.mX+18); k++) {
+						for(int l=map.CheckHeight(pos.mY-18); l<=map.CheckHeight(pos.mY+18); l++) {
 							if(map.GetTileType(k, l) == TileType.ENEMY) {
 								map.SetTileType(k, l, TileType.EMPTY);
 							}

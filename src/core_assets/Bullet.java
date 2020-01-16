@@ -8,16 +8,10 @@ import data.Position;
 
 public class Bullet extends NativeObject {
 	private Direction mDirection;
-	private boolean mIsMoving;
 
 	public Bullet(Position aPosition, Direction aDirection) {
 		super(aPosition);
 		mDirection = aDirection;
-		mIsMoving = true;
-	}
-
-	public boolean IsMoving() {
-		return mIsMoving;
 	}
 
 	public Position GetNextPosition(final Map aMap) {
@@ -41,10 +35,8 @@ public class Bullet extends NativeObject {
 				aMap.TryMoveTile(mPos, newPos, TileType.INACCESSIBLE, TileType.GOAL)) {
 			AddMove(new Move(mPos, newPos));
 			mPos = newPos;
-			mIsMoving = true;
 			super.ExecuteMove(aMap);
 		} else {
-			mIsMoving = false;
 		}
 	}
 
