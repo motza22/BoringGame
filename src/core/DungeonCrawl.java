@@ -60,6 +60,9 @@ public class DungeonCrawl extends State implements KeyListener {
 
 	private void EndGame() {
 		mMapLock.lock();
+		for(int i=0; i<mBullets.size(); i++) {
+			mMap.SetTileType(mBullets.elementAt(i).GetPosition(), TileType.EMPTY);
+		}
 		MapUtil.Save(mMap);
 		mMapLock.unlock();
 		mStats.Save();
@@ -92,7 +95,7 @@ public class DungeonCrawl extends State implements KeyListener {
 		mMapLock.lock();
 		for(int i=mBullets.size()-1; i>=0; i--) {
 			if(!mMap.TryMoveTile(mBullets.elementAt(i).GetPosition(), mBullets.elementAt(i).GetNextPosition(mMap),
-					TileType.INACCESSIBLE, TileType.GOAL,TileType.ENEMY)) {
+					TileType.INACCESSIBLE, TileType.GOAL, TileType.ENEMY, TileType.BULLET)) {
 				if(mMap.GetTileType(mBullets.elementAt(i).GetNextPosition(mMap)) == TileType.ENEMY) {
 					RemoveEnemyAtPosition(mBullets.elementAt(i).GetNextPosition(mMap));
 					mMap.SetTileType(mBullets.elementAt(i).GetNextPosition(mMap), TileType.EMPTY);

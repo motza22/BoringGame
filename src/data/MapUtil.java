@@ -170,10 +170,10 @@ public abstract class MapUtil {
 				clusterPlaced = true;
 				aMap.SetTileType(enemyPos, TileType.ENEMY);
 
-				int groupSize = (BoundaryRNG.Range(1, 20) > 15 ? BoundaryRNG.Range(1, 4) : 0);
+				int groupSize = (BoundaryRNG.Range(1, 20) > 15 ? BoundaryRNG.Range(2, 4) : 1);
 				int runCount = 0;
 
-				while(runCount++ < 8 && groupSize > 0)
+				while(runCount++ < 22 && groupSize > 0)
 				{
 					enemyPos.mX = aMap.CheckWidth(enemyPos.mX + BoundaryRNG.Range(-1, 1));
 					enemyPos.mY = aMap.CheckHeight(enemyPos.mY + BoundaryRNG.Range(-1, 1));

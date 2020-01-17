@@ -85,6 +85,8 @@ public class ViewMap extends State implements MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if(sNewButton.CheckBounds(e.getX(), e.getY())) {
 			mMap = MapUtil.GenerateNew(JFrameApplication.WIDTH / MapTile.sTileSize, JFrameApplication.HEIGHT / MapTile.sTileSize);
+			mStats = new GameStats();
+			mStats.Save();
 			Show();
 		} else if(sPlayButton.CheckBounds(e.getX(), e.getY())) {
 			Game.GetInstance().PopPush(1, new DungeonCrawl());
