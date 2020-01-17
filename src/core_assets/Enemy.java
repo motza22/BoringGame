@@ -10,19 +10,26 @@ import data.Move;
 import data.Position;
 
 public class Enemy extends NativeObject {
-	Map mMap;
+	private static final int sIntelligence = 50;
+	private Map mMap;
+	private int mAge;
 
 	public Enemy(Position aPosition, Map aMap) {
 		super(aPosition);
 		mMap = aMap;
+		mAge = 0;
 	}
 
-	public void UpdateTarget(Position aPosition) {
+	public int GetAge() {
+		return mAge;
+	}
+
+	public void UpdatePath(Position aPosition) {
 		mMap.SetTileType(mPos, TileType.HEATMAP);
 		mMoves.clear();
 		Vector<Node> nodes = new Vector<Node>();
 		nodes.add(new Node(mMap, mPos, aPosition));
-		Node node = PathFinder.ProcessNodes(nodes, 10);
+		Node node = PathFinder.ProcessNodes(nodes, sIntelligence);
 		if(node != null) {
 			Vector<Move> moves = node.GetMoveList();
 			if(!moves.isEmpty()) {
@@ -31,17 +38,22 @@ public class Enemy extends NativeObject {
 				});
 			}
 		}
-		for(int i = mMap.CheckWidth(mPos.mX-10); i <= mMap.CheckWidth(mPos.mX+10); i++) {
-			for(int j = mMap.CheckHeight(mPos.mY-10); j <= mMap.CheckHeight(mPos.mY+10); j++) {
+		for(int i = mMap.CheckWidth(mPos.mX-sIntelligence); i <= mMap.CheckWidth(mPos.mX+sIntelligence); i++) {
+			for(int j = mMap.CheckHeight(mPos.mY-sIntelligence); j <= mMap.CheckHeight(mPos.mY+sIntelligence); j++) {
 				if(mMap.GetTileType(i, j) == TileType.HEATMAP) {
 					mMap.SetTileType(i, j, TileType.EMPTY);
 				}
 			}
 		}
 		mMap.SetTileType(mPos, TileType.ENEMY);
+		mAge = 0;
 	}
 
 	public void ExecuteMove() {
-		super.ExecuteMove(mMap);
+		if(!mMoves.isEmpty() && mMap.TryMoveTile(mMoves.firstElement().mOrigPos, mMoves.firstElement().mNewPos,
+				TileType.INACCESSIBLE, TileType.BULLET, TileType.ENEMY)) {
+			super.ExecuteMove(mMap);
+		}
+		mAge++;
 	}
 }

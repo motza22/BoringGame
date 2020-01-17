@@ -113,7 +113,9 @@ public class DungeonCrawl extends State implements KeyListener {
 		mMapLock.lock();
 		boolean isPlayerAlive = true;
 		for(int i=0; i<mEnemies.size(); i++) {
-			mEnemies.elementAt(i).UpdateTarget(mPlayerPos);
+			if(mEnemies.elementAt(i).GetMoveCount() == 0 || mEnemies.elementAt(i).GetAge()>=5) {
+				mEnemies.elementAt(i).UpdatePath(mPlayerPos);
+			}
 			mEnemies.elementAt(i).ExecuteMove();
 			if(mEnemies.elementAt(i).GetPosition().Compare(mPlayerPos)) {
 				isPlayerAlive = false;
