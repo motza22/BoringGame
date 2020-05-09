@@ -83,11 +83,14 @@ public class MouseTest extends State implements MouseMotionListener, KeyListener
 			mMap.SetTileType(mPath.firstElement().mNewPos, TileType.EMPTY);
 			mPath.remove(mPath.firstElement());
 		}
-		Vector<Move> moveList = PathFinder.Calculate(new Map(mMap), mPlayerPos, new Position(e.getX() / MapTile.sTileSize, e.getY() / MapTile.sTileSize));
-		if(moveList != null) {
-			mPath = moveList;
-			for(int i=0; i<mPath.size(); i++) {
-				mMap.SetTileType(mPath.elementAt(i).mNewPos, TileType.HEATMAP);
+		Position targetPos = new Position(e.getX() / MapTile.sTileSize, e.getY() / MapTile.sTileSize);
+		if( mMap.TryMoveTile(mPlayerPos, targetPos, TileType.INACCESSIBLE, TileType.HEATMAP, TileType.ENEMY, TileType.PLAYER, TileType.GOAL, TileType.BULLET)) {
+			Vector<Move> moveList = PathFinder.Calculate(new Map(mMap), mPlayerPos, targetPos);
+			if(moveList != null) {
+				mPath = moveList;
+				for(int i=0; i<mPath.size(); i++) {
+					mMap.SetTileType(mPath.elementAt(i).mNewPos, TileType.HEATMAP);
+				}
 			}
 		}
 	}
